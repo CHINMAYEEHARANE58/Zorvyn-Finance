@@ -1,0 +1,31 @@
+export const MOCK_TRANSACTIONS = [
+  { id: 'tx-1001', date: '2026-01-02', amount: 5200, category: 'Salary', type: 'income', description: 'Monthly payroll credit' },
+  { id: 'tx-1002', date: '2026-01-04', amount: 210, category: 'Groceries', type: 'expense', description: 'Weekly supermarket run' },
+  { id: 'tx-1003', date: '2026-01-07', amount: 80, category: 'Transport', type: 'expense', description: 'Metro and cab rides' },
+  { id: 'tx-1004', date: '2026-01-19', amount: 420, category: 'Utilities', type: 'expense', description: 'Internet and electricity bill' },
+  { id: 'tx-1005', date: '2026-02-01', amount: 5200, category: 'Salary', type: 'income', description: 'Monthly payroll credit' },
+  { id: 'tx-1006', date: '2026-02-05', amount: 160, category: 'Dining', type: 'expense', description: 'Dinner with friends' },
+  { id: 'tx-1007', date: '2026-02-11', amount: 700, category: 'Rent', type: 'expense', description: 'Apartment rent payment' },
+  { id: 'tx-1008', date: '2026-02-18', amount: 120, category: 'Shopping', type: 'expense', description: 'Online shopping order' },
+  { id: 'tx-1009', date: '2026-03-01', amount: 5200, category: 'Salary', type: 'income', description: 'Monthly payroll credit' },
+  { id: 'tx-1010', date: '2026-03-03', amount: 320, category: 'Insurance', type: 'expense', description: 'Health insurance premium' },
+  { id: 'tx-1011', date: '2026-03-15', amount: 280, category: 'Groceries', type: 'expense', description: 'Bulk groceries for home' },
+  { id: 'tx-1012', date: '2026-03-23', amount: 90, category: 'Transport', type: 'expense', description: 'Fuel refill' },
+  { id: 'tx-1013', date: '2026-03-28', amount: 450, category: 'Freelance', type: 'income', description: 'Freelance project payout' },
+  { id: 'tx-1014', date: '2026-04-01', amount: 5200, category: 'Salary', type: 'income', description: 'Monthly payroll credit' },
+  { id: 'tx-1015', date: '2026-04-02', amount: 145, category: 'Dining', type: 'expense', description: 'Weekend cafe spending' },
+]
+
+export const DEFAULT_CATEGORIES = [
+  'Salary',
+  'Freelance',
+  'Rent',
+  'Groceries',
+  'Utilities',
+  'Transport',
+  'Insurance',
+  'Dining',
+  'Shopping',
+  'Healthcare',
+  'Other',
+]
