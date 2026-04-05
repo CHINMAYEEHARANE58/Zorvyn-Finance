@@ -136,6 +136,9 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
   const navigate = useNavigate()
   const {
     isLoading,
+    transactionsApiError,
+    retryTransactionsLoad,
+    clearTransactionsApiError,
     role,
     setRole,
     darkMode,
@@ -316,6 +319,22 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
 
   return (
     <div className="space-y-5 md:space-y-6">
+      {transactionsApiError ? (
+        <Card className="border-amber-400/35 bg-amber-500/10 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-amber-100">{transactionsApiError}</p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="secondary" onClick={() => void retryTransactionsLoad()}>
+                Retry
+              </Button>
+              <Button size="sm" variant="secondary" onClick={clearTransactionsApiError}>
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        </Card>
+      ) : null}
+
       <div ref={dashboardRef}>
         <SectionReveal delay={0.02} className="relative z-50">
           <DashboardTopBar

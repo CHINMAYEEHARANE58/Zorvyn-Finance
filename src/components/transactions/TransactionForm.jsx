@@ -62,6 +62,8 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
   const [hasManualCategorySelection, setHasManualCategorySelection] = useState(
     Boolean(editingTransaction),
   )
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const suggestedCategory = useMemo(
     () => getSuggestedCategory(formValues.description, formValues.type),
     [formValues.description, formValues.type],
@@ -82,8 +84,9 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
     })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
+    setSubmitError('')
 
     const payload = {
       date: formValues.date,
@@ -93,12 +96,25 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
       type: formValues.type,
     }
 
-    if (!payload.date || !payload.amount || payload.amount < 0) return
+    if (!payload.date || !payload.amount || payload.amount < 0) {
+      setSubmitError('Enter a valid date and amount.')
+      return
+    }
 
+    setIsSubmitting(true)
+
+    let result
     if (editingTransaction) {
-      updateTransaction(editingTransaction.id, payload)
+      result = await updateTransaction(editingTransaction.id, payload)
     } else {
-      addTransaction(payload)
+      result = await addTransaction(payload)
+    }
+
+    setIsSubmitting(false)
+
+    if (!result?.ok) {
+      setSubmitError(result?.error || 'Unable to save transaction. Please retry.')
+      return
     }
 
     onClose()
@@ -175,13 +191,17 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
       </select>
 
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" className="flex-1">
-          {editingTransaction ? 'Update' : 'Add'}
+        <Button type="submit" variant="primary" className="flex-1" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving...' : editingTransaction ? 'Update' : 'Add'}
         </Button>
-        <Button type="button" variant="secondary" onClick={onClose}>
+        <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
           Cancel
         </Button>
       </div>
+
+      {submitError ? (
+        <p className="text-xs text-red-300 lg:col-span-6">{submitError}</p>
+      ) : null}
 
       {suggestedCategory ? (
         <p className="text-xs text-gray-400 lg:col-span-6">

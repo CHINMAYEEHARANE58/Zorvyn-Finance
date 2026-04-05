@@ -1,37 +1,152 @@
-# Zorvyn Finance Dashboard (Complete SaaS Frontend)
+# Zorvyn Finance Dashboard
 
-A full frontend-only SaaS experience built with React + Tailwind:
+A frontend-only finance SaaS dashboard built with React, Tailwind CSS, Framer Motion, and Recharts.
 
-- Landing page
-- Authentication (login/signup) with localStorage
-- Protected app routes
-- Personalized dashboard and profile
-- Interactive financial tools (What-if simulator, goal tracker, alerts)
+The app includes:
+- Landing + authentication flow
+- Protected dashboard + profile experience
+- Interactive finance analytics
+- Role-based UI simulation (Viewer/Admin)
+- Mock API integration (no backend required)
 
-## Setup
+## 1. Setup Instructions
+
+### Prerequisites
+- Node.js 18+
+- npm 9+
+
+### Install and run
 
 ```bash
 npm install
 npm run dev
 ```
 
-Validate and build:
+### Lint and production build
 
 ```bash
 npm run lint
 npm run build
 ```
 
-Google OAuth setup (optional but recommended):
+## 2. Environment Variables (Optional)
+
+Create `.env` in project root if you want to tune mock API behavior:
 
 ```bash
-# .env
+# Mock API latency window (milliseconds)
+VITE_MOCK_API_MIN_DELAY_MS=220
+VITE_MOCK_API_MAX_DELAY_MS=520
+
+# 0 to 1 (e.g. 0.1 = 10% simulated failures)
+VITE_MOCK_API_ERROR_RATE=0
+
+# Optional Google auth button support (frontend-only simulation)
 VITE_GOOGLE_CLIENT_ID=your_google_web_client_id
 ```
 
-Without this env var, the Google auth button is shown disabled with guidance text.
+## 3. Project Approach
 
-## Navigation Flow
+### Frontend architecture
+- **UI**: Reusable component-driven architecture with React functional components + hooks.
+- **State management**: Context-based (`FinanceContext`, `AuthContext`) for app-wide state.
+- **Data flow**:
+  1. Pages consume context (`useFinance`, `useAuth`)
+  2. Finance context composes hooks (`useTransactions`, `useFilters`, `useInsights`)
+  3. `useTransactions` talks to the mock API service layer
+
+### Mock API integration (no backend)
+A dedicated mock API layer is implemented in:
+- `src/api/mockApiClient.js`
+- `src/api/transactionsApi.js`
+
+The API layer provides:
+- Async request simulation (latency)
+- Optional failure simulation (`VITE_MOCK_API_ERROR_RATE`)
+- Standardized API errors
+- CRUD-style transaction operations
+- localStorage-backed persistence as mock database
+
+## 4. Mock API Contracts
+
+Implemented contracts (simulated in frontend):
+- `GET /api/transactions`
+- `POST /api/transactions`
+- `PATCH /api/transactions/:id`
+- `DELETE /api/transactions/:id`
+- `POST /api/transactions/import`
+- `POST /api/transactions/reset`
+
+## 5. Feature Overview
+
+### Core dashboard features
+- Summary cards (Balance, Income, Savings)
+- Time-based visualization (balance trend)
+- Categorical visualization (spending by category)
+- Budget progress and spending health insights
+
+### Transactions section
+- Timeline-style transaction feed with:
+  - Date
+  - Amount
+  - Category
+  - Type (income/expense)
+- Search, filtering, sorting
+- Empty states and no-result states
+- Export (`CSV`, `JSON`)
+
+### Role-based UI simulation
+- Role switcher in dashboard (`Viewer` / `Admin`)
+- Viewer:
+  - Read-only behavior
+  - Disabled edit/add controls with tooltip hints
+- Admin:
+  - Add/edit/delete transaction actions
+
+### Insights
+- Highest spending category
+- Monthly comparison and trend
+- Savings trend and health score logic
+- Conversational insight lines generated from current data
+
+### Profile page
+- Account info and joined date
+- Editable name and saved preferences
+- Currency/theme preferences
+- Historical stats and recent activity summary
+
+### Interactions and UX polish
+- Responsive desktop/tablet/mobile behavior
+- Expandable charts/cards in modal view
+- Notification center with filtering and read state
+- Smooth transitions and hover/press interactions
+- Focus mode for reduced visual noise
+
+## 6. State Management and Persistence
+
+### Finance state (`FinanceContext`)
+- Transactions
+- Filters/search/sort
+- Role
+- Time range
+- Theme/focus mode
+- Section preferences
+- API error/retry signals
+
+### Auth state (`AuthContext`)
+- User records
+- Session state
+- Login/signup/logout
+- Demo login + optional Google-login simulation
+
+### Persistence
+Stored in `localStorage`:
+- Transactions
+- Session/user profile
+- Theme and dashboard preferences
+- Goals and notification read/dismissed states
+
+## 7. Routes
 
 - `/` Landing page
 - `/login` Login page
@@ -39,129 +154,21 @@ Without this env var, the Google auth button is shown disabled with guidance tex
 - `/dashboard` Protected dashboard
 - `/profile` Protected profile page
 
-## Auth and Route Protection
+Route protection:
+- Unauthenticated users cannot access protected routes
+- Authenticated users are redirected away from auth pages
 
-### Frontend auth (localStorage)
-- Stores users and session in localStorage
-- Signup creates user profile and logs in immediately
-- Login validates credentials against local users
-- Google login/signup supported (frontend-only; upserts by email in localStorage)
-- Demo login available
-- Logout clears active session
+## 8. Folder Highlights
 
-### Route behavior
-- `/dashboard` and `/profile` require authentication
-- Unauthenticated users are redirected to `/login`
-- Authenticated users are redirected away from `/login` and `/signup`
+- `src/pages` → Route-level pages
+- `src/components` → Reusable UI and feature components
+- `src/context` → App-level state providers
+- `src/hooks` → Encapsulated logic (`useTransactions`, `useFilters`, `useInsights`)
+- `src/api` → Mock API contracts + client simulation
+- `src/utils` → Shared formatters/calculations
 
-## Auth-Aware UI
+## 9. Notes
 
-### Navbar
-- Logged out:
-  - `Login`
-  - `Get Started`
-- Logged in:
-  - Avatar menu with animated dropdown
-  - Menu items: `Profile`, `Dashboard`, `Logout`
-
-## Profile Page (`/profile`)
-
-### Sections
-1. User info
-- Name, email, joined date
-- Avatar placeholder using initials
-
-2. Edit profile
-- Update display name
-- Persists to localStorage
-
-3. Account stats
-- Total transactions
-- Total income
-- Total expenses
-- Savings
-
-4. Preferences
-- Theme toggle
-- Default currency selection
-- Persists to localStorage
-
-5. Logout control
-
-## Dashboard Personalization and Product Features
-
-### Personalized experience
-- Dashboard greeting: `Welcome back, {name} 👋`
-- Insights can be personalized with the logged-in user name
-
-### Advanced product features implemented
-1. Goal Tracker
-- Set monthly savings goal
-- Progress bar with current savings vs target
-- Goal persisted per user in localStorage
-
-2. Spending Alerts
-- Alert banner when spending exceeds threshold
-- Example: spent 80%+ of budget for selected range
-
-3. Date Range Filter
-- `This Week / Month / Year`
-- Updates scoped metrics and charts
-
-4. Export + Import Data
-- Export CSV/JSON
-- Import JSON to restore transaction data (validated)
-
-5. Dashboard Customization
-- Toggle charts visibility
-- Toggle insights visibility
-- Preferences persisted in localStorage
-
-6. Story Mode + Behavioral Insights
-- Weekly narrative recap of savings/spending behavior
-- Actionable nudges based on spending pressure and category concentration
-- Lightweight achievements (streaks, budget discipline, consistency)
-
-7. Scenario Comparison Timeline
-- Save up to 3 what-if scenarios
-- Compare baseline vs scenario savings for recent months
-- Helps evaluate which category cut has stronger long-term effect
-
-8. Smart Transaction Auto-Tagging
-- Add optional transaction description
-- Category suggestions are generated from keywords
-- One-click apply suggestion during transaction entry
-
-## Existing Interactive Analytics
-
-- Summary cards
-- Balance trend chart
-- Spending category chart
-- What-if Analysis simulator
-- Transactions filtering/search/sort
-- Role-based transaction actions
-
-## Motion and UI Polish
-
-- Smooth page transitions (Framer Motion)
-- Dropdown animation (fade + slide)
-- Card hover lift
-- Button press scale
-- Input focus glow
-- Table row hover highlight + action reveal on hover
-
-## Data Persistence
-
-Stored in localStorage:
-- Auth users
-- Auth session
-- User profile fields
-- User preferences
-- Transactions
-- Dashboard preferences (focus mode, time range, section visibility)
-- Goal tracker target
-
-## Notes
-
-- Backend is intentionally not implemented.
-- Build warning about chunk size is expected due charting + animation libraries.
+- This app intentionally has **no backend service**.
+- Mock API integration is frontend-only and ideal for demos/interviews.
+- For production backend migration, replace `src/api/*` implementations while preserving existing UI/state architecture.

@@ -1,106 +1,132 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { DEFAULT_CATEGORIES, MOCK_TRANSACTIONS } from '../data/mockTransactions'
+import { DEFAULT_CATEGORIES } from '../data/mockTransactions'
+import { getMockApiErrorMessage } from '../api/mockApiClient'
+import { transactionsApi } from '../api/transactionsApi'
 
-const sanitizeTransaction = (transaction, index) => {
-  const amount = Number(transaction.amount)
-  const type = transaction.type === 'income' ? 'income' : 'expense'
-  const date = String(transaction.date || '').slice(0, 10)
-
-  if (!date || Number.isNaN(amount) || amount < 0 || !transaction.category) {
-    return null
-  }
-
-  return {
-    id: transaction.id || `import-${Date.now()}-${index}`,
-    date,
-    amount,
-    description: String(transaction.description || ''),
-    category: String(transaction.category),
-    type,
-  }
+const getCategoriesFromTransactions = (transactions) => {
+  const dynamicCategories = transactions.map((transaction) => transaction.category)
+  return [...new Set([...DEFAULT_CATEGORIES, ...dynamicCategories])]
 }
 
-export const useTransactions = ({ storageKey, loadingDelay = 350 }) => {
+export const useTransactions = ({ storageKey }) => {
   const [transactions, setTransactions] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [apiError, setApiError] = useState('')
 
-  useEffect(() => {
-    const bootstrapTimer = setTimeout(() => {
-      try {
-        const rawValue = window.localStorage.getItem(storageKey)
-        const parsed = rawValue ? JSON.parse(rawValue) : null
+  const loadTransactions = useCallback(async () => {
+    setIsLoading(true)
 
-        setTransactions(
-          Array.isArray(parsed) && parsed.length > 0 ? parsed : MOCK_TRANSACTIONS,
-        )
-      } catch {
-        setTransactions(MOCK_TRANSACTIONS)
-      }
-
+    try {
+      const response = await transactionsApi.list({ storageKey })
+      setTransactions(response.data.transactions)
+      setApiError('')
+      return { ok: true }
+    } catch (error) {
+      const message = getMockApiErrorMessage(error, 'Failed to load transactions.')
+      setApiError(message)
+      return { ok: false, error: message }
+    } finally {
       setIsLoading(false)
-    }, loadingDelay)
-
-    return () => clearTimeout(bootstrapTimer)
-  }, [storageKey, loadingDelay])
+    }
+  }, [storageKey])
 
   useEffect(() => {
-    if (isLoading) return
-    window.localStorage.setItem(storageKey, JSON.stringify(transactions))
-  }, [storageKey, transactions, isLoading])
+    void loadTransactions()
+  }, [loadTransactions])
 
-  const categories = useMemo(() => {
-    const dynamicCategories = transactions.map((transaction) => transaction.category)
-    return [...new Set([...DEFAULT_CATEGORIES, ...dynamicCategories])]
-  }, [transactions])
+  const categories = useMemo(
+    () => getCategoriesFromTransactions(transactions),
+    [transactions],
+  )
 
-  const addTransaction = useCallback((payload) => {
-    const id = `tx-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-    setTransactions((previous) => [...previous, { id, ...payload }])
-  }, [])
+  const addTransaction = useCallback(
+    async (payload) => {
+      try {
+        const response = await transactionsApi.create(payload, { storageKey })
+        setTransactions(response.data.transactions)
+        setApiError('')
+        return { ok: true, transaction: response.data.transaction }
+      } catch (error) {
+        const message = getMockApiErrorMessage(error, 'Failed to add transaction.')
+        setApiError(message)
+        return { ok: false, error: message }
+      }
+    },
+    [storageKey],
+  )
 
-  const updateTransaction = useCallback((transactionId, payload) => {
-    setTransactions((previous) =>
-      previous.map((transaction) =>
-        transaction.id === transactionId ? { ...transaction, ...payload } : transaction,
-      ),
-    )
-  }, [])
+  const updateTransaction = useCallback(
+    async (transactionId, payload) => {
+      try {
+        const response = await transactionsApi.update(transactionId, payload, { storageKey })
+        setTransactions(response.data.transactions)
+        setApiError('')
+        return { ok: true, transaction: response.data.transaction }
+      } catch (error) {
+        const message = getMockApiErrorMessage(error, 'Failed to update transaction.')
+        setApiError(message)
+        return { ok: false, error: message }
+      }
+    },
+    [storageKey],
+  )
 
-  const removeTransaction = useCallback((transactionId) => {
-    setTransactions((previous) =>
-      previous.filter((transaction) => transaction.id !== transactionId),
-    )
-  }, [])
+  const removeTransaction = useCallback(
+    async (transactionId) => {
+      try {
+        const response = await transactionsApi.remove(transactionId, { storageKey })
+        setTransactions(response.data.transactions)
+        setApiError('')
+        return { ok: true }
+      } catch (error) {
+        const message = getMockApiErrorMessage(error, 'Failed to delete transaction.')
+        setApiError(message)
+        return { ok: false, error: message }
+      }
+    },
+    [storageKey],
+  )
 
-  const replaceTransactions = useCallback((payloadTransactions) => {
-    if (!Array.isArray(payloadTransactions)) {
-      return { ok: false, error: 'Invalid JSON format. Expected an array of transactions.' }
+  const replaceTransactions = useCallback(
+    async (payloadTransactions) => {
+      try {
+        const response = await transactionsApi.replace(payloadTransactions, { storageKey })
+        setTransactions(response.data.transactions)
+        setApiError('')
+        return { ok: true, importedCount: response.data.importedCount }
+      } catch (error) {
+        const message = getMockApiErrorMessage(error, 'Failed to import transactions.')
+        setApiError(message)
+        return { ok: false, error: message }
+      }
+    },
+    [storageKey],
+  )
+
+  const resetData = useCallback(async () => {
+    try {
+      const response = await transactionsApi.reset({ storageKey })
+      setTransactions(response.data.transactions)
+      setApiError('')
+      return { ok: true }
+    } catch (error) {
+      const message = getMockApiErrorMessage(error, 'Failed to reset transactions.')
+      setApiError(message)
+      return { ok: false, error: message }
     }
-
-    const sanitized = payloadTransactions
-      .map((transaction, index) => sanitizeTransaction(transaction, index))
-      .filter(Boolean)
-
-    if (!sanitized.length) {
-      return { ok: false, error: 'No valid transactions found in imported file.' }
-    }
-
-    setTransactions(sanitized)
-    return { ok: true, importedCount: sanitized.length }
-  }, [])
-
-  const resetData = useCallback(() => {
-    setTransactions(MOCK_TRANSACTIONS)
-  }, [])
+  }, [storageKey])
 
   return {
     transactions,
     isLoading,
+    apiError,
     categories,
     addTransaction,
     updateTransaction,
     removeTransaction,
     replaceTransactions,
     resetData,
+    retryLoad: loadTransactions,
+    clearApiError: () => setApiError(''),
   }
 }

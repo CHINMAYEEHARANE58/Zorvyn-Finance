@@ -42,11 +42,8 @@ export const LandingPage = () => {
                 Built for focused finance workflows
               </p>
 
-              <h1 className="mt-7 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-7xl">
-                Manage cashflow with{' '}
-                <span className="text-gradient-fintech">clarity</span>,{' '}
-                <span className="text-gradient-fintech">control</span>, and{' '}
-                <span className="text-gradient-fintech">confidence</span>
+              <h1 className="text-gradient-fintech mt-7 text-4xl font-semibold leading-tight sm:text-5xl lg:text-7xl">
+                Manage cashflow with clarity, control, and confidence
               </h1>
 
               <p className="mx-auto mt-6 max-w-3xl text-base text-gray-400 sm:text-lg">

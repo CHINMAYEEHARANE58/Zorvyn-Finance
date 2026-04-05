@@ -57,12 +57,15 @@ export const FinanceProvider = ({ children }) => {
   const {
     transactions,
     isLoading,
+    apiError,
     categories,
     addTransaction,
     updateTransaction,
     removeTransaction,
     replaceTransactions,
     resetData,
+    retryLoad,
+    clearApiError,
   } = useTransactions({ storageKey: STORAGE_KEYS.transactions })
 
   const [role, setRole] = useState(getInitialRole)
@@ -123,15 +126,18 @@ export const FinanceProvider = ({ children }) => {
   }, [])
 
   const updateExistingTransaction = useCallback(
-    (transactionId, payload) => {
-      updateTransaction(transactionId, payload)
-      setEditingTransaction(null)
+    async (transactionId, payload) => {
+      const result = await updateTransaction(transactionId, payload)
+      if (result.ok) {
+        setEditingTransaction(null)
+      }
+      return result
     },
     [updateTransaction],
   )
 
   const importTransactions = useCallback(
-    (payloadTransactions) => {
+    async (payloadTransactions) => {
       return replaceTransactions(payloadTransactions)
     },
     [replaceTransactions],
@@ -144,14 +150,17 @@ export const FinanceProvider = ({ children }) => {
     }))
   }, [])
 
-  const resetAllData = useCallback(() => {
-    resetData()
+  const resetAllData = useCallback(async () => {
+    await resetData()
     setFilters(FILTER_DEFAULTS)
     setEditingTransaction(null)
   }, [resetData, setFilters])
 
   const value = {
     isLoading,
+    transactionsApiError: apiError,
+    retryTransactionsLoad: retryLoad,
+    clearTransactionsApiError: clearApiError,
     role,
     setRole: changeRole,
     darkMode,
