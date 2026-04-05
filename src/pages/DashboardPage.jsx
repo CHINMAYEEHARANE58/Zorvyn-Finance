@@ -14,7 +14,105 @@ import { SectionReveal } from '../components/ui/SectionReveal'
 import { Tooltip } from '../components/ui/Tooltip'
 import { useAuth } from '../context/useAuth'
 import { useFinance } from '../context/useFinance'
+import { formatCurrency } from '../utils/formatters'
 import { useNavigate } from 'react-router-dom'
+
+const NOTIFICATION_READ_KEY = 'zorvyn.notifications.readIds'
+const NOTIFICATION_DISMISSED_KEY = 'zorvyn.notifications.dismissedIds'
+
+const readStoredArray = (key) => {
+  try {
+    const rawValue = window.localStorage.getItem(key)
+    const parsed = rawValue ? JSON.parse(rawValue) : []
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+const buildDashboardNotifications = ({
+  transactions,
+  summary,
+  insights,
+  timeRange,
+  currency,
+}) => {
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => new Date(b.date) - new Date(a.date),
+  )
+
+  const activityNotifications = sortedTransactions.slice(0, 6).map((transaction, index) => {
+    const hour = transaction.type === 'income' ? 10 : 18
+    const minute = (index * 7) % 60
+    const eventAt = new Date(`${transaction.date}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`)
+
+    return {
+      id: `txn-${transaction.id}`,
+      type: 'activity',
+      title:
+        transaction.type === 'income'
+          ? `${transaction.category} income recorded`
+          : `${transaction.category} expense recorded`,
+      message: `${transaction.description || 'No description'} · ${
+        transaction.type === 'income' ? '+' : '-'
+      }${formatCurrency(transaction.amount, currency)}`,
+      eventAt: eventAt.toISOString(),
+    }
+  })
+
+  const now = Date.now()
+  const insightNotifications = []
+
+  if (insights.spendingHealth?.status === 'Risky') {
+    insightNotifications.push({
+      id: `insight-spending-risk-${timeRange}`,
+      type: 'alert',
+      title: 'Spending alert',
+      message: `Expenses are above safe limits for this ${timeRange}. Review discretionary categories.`,
+      eventAt: new Date(now - 12 * 60 * 1000).toISOString(),
+    })
+  }
+
+  if (insights.highestCategory) {
+    insightNotifications.push({
+      id: `insight-category-${insights.highestCategory.category}-${timeRange}`,
+      type: 'insight',
+      title: `Top spending category: ${insights.highestCategory.category}`,
+      message: `${insights.highestCategory.percent}% of tracked expenses are from this category.`,
+      eventAt: new Date(now - 42 * 60 * 1000).toISOString(),
+    })
+  }
+
+  if (insights.savingsTrend === 'up') {
+    insightNotifications.push({
+      id: `insight-savings-up-${timeRange}`,
+      type: 'insight',
+      title: 'Savings trend improved',
+      message: `Savings improved by ${insights.savingsImprovementPercent || 0}% compared with last month.`,
+      eventAt: new Date(now - 90 * 60 * 1000).toISOString(),
+    })
+  } else if (insights.savingsTrend === 'down') {
+    insightNotifications.push({
+      id: `insight-savings-down-${timeRange}`,
+      type: 'alert',
+      title: 'Savings trend declined',
+      message: 'Savings dipped compared with last month. Consider tightening one high-cost category.',
+      eventAt: new Date(now - 90 * 60 * 1000).toISOString(),
+    })
+  }
+
+  insightNotifications.push({
+    id: `snapshot-balance-${timeRange}`,
+    type: 'update',
+    title: 'Balance snapshot updated',
+    message: `Current balance is ${formatCurrency(summary.totalBalance, currency)} in ${timeRange} view.`,
+    eventAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(),
+  })
+
+  return [...insightNotifications, ...activityNotifications].sort(
+    (a, b) => new Date(b.eventAt) - new Date(a.eventAt),
+  )
+}
 
 const triggerDownload = (name, content, mimeType) => {
   const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
@@ -63,6 +161,12 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
 
   const [showForm, setShowForm] = useState(false)
   const [presetType, setPresetType] = useState('expense')
+  const [readNotificationIds, setReadNotificationIds] = useState(() =>
+    readStoredArray(NOTIFICATION_READ_KEY),
+  )
+  const [dismissedNotificationIds, setDismissedNotificationIds] = useState(() =>
+    readStoredArray(NOTIFICATION_DISMISSED_KEY),
+  )
 
   const dashboardRef = useRef(null)
   const budgetingRef = useRef(null)
@@ -80,6 +184,32 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
     return insights.conversationalInsights?.slice(0, 3) || []
   }, [insights.conversationalInsights])
 
+  const dashboardNotifications = useMemo(
+    () =>
+      buildDashboardNotifications({
+        transactions,
+        summary,
+        insights,
+        timeRange,
+        currency,
+      }),
+    [transactions, summary, insights, timeRange, currency],
+  )
+
+  const notifications = useMemo(() => {
+    return dashboardNotifications
+      .filter((notification) => !dismissedNotificationIds.includes(notification.id))
+      .map((notification) => ({
+        ...notification,
+        isRead: readNotificationIds.includes(notification.id),
+      }))
+  }, [dashboardNotifications, dismissedNotificationIds, readNotificationIds])
+
+  const unreadNotificationCount = useMemo(
+    () => notifications.filter((notification) => !notification.isRead).length,
+    [notifications],
+  )
+
   useEffect(() => {
     const sectionMap = {
       dashboard: dashboardRef,
@@ -96,6 +226,20 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
     })
   }, [activeSidebarItem])
 
+  useEffect(() => {
+    window.localStorage.setItem(
+      NOTIFICATION_READ_KEY,
+      JSON.stringify(readNotificationIds),
+    )
+  }, [readNotificationIds])
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      NOTIFICATION_DISMISSED_KEY,
+      JSON.stringify(dismissedNotificationIds),
+    )
+  }, [dismissedNotificationIds])
+
   const openAddForm = (nextType = 'expense') => {
     if (readOnly) return
     setPresetType(nextType)
@@ -111,6 +255,37 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
   const closeForm = () => {
     setShowForm(false)
     setEditingTransaction(null)
+  }
+
+  const openQuickActionForm = (nextType) => {
+    openAddForm(nextType)
+    transactionsRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+
+  const markNotificationRead = (notificationId) => {
+    setReadNotificationIds((previous) =>
+      previous.includes(notificationId) ? previous : [...previous, notificationId],
+    )
+  }
+
+  const markAllNotificationsRead = () => {
+    setReadNotificationIds((previous) => {
+      const next = new Set(previous)
+      notifications.forEach((notification) => next.add(notification.id))
+      return [...next]
+    })
+  }
+
+  const dismissNotification = (notificationId) => {
+    setDismissedNotificationIds((previous) =>
+      previous.includes(notificationId) ? previous : [...previous, notificationId],
+    )
+    setReadNotificationIds((previous) =>
+      previous.includes(notificationId) ? previous : [...previous, notificationId],
+    )
   }
 
   const exportCsv = () => {
@@ -142,7 +317,7 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
   return (
     <div className="space-y-5 md:space-y-6">
       <div ref={dashboardRef}>
-        <SectionReveal delay={0.02}>
+        <SectionReveal delay={0.02} className="relative z-50">
           <DashboardTopBar
             searchTerm={filters.searchTerm}
             onSearchChange={(value) => updateFilter('searchTerm', value)}
@@ -157,6 +332,11 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
             user={user}
             onOpenMobileSidebar={onOpenMobileSidebar}
             onOpenProfile={() => navigate('/profile')}
+            notifications={notifications}
+            unreadCount={unreadNotificationCount}
+            onMarkNotificationRead={markNotificationRead}
+            onMarkAllNotificationsRead={markAllNotificationsRead}
+            onDismissNotification={dismissNotification}
           />
         </SectionReveal>
       </div>
@@ -254,7 +434,7 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
                   {readOnly ? (
                     <Tooltip content="Switch to admin to edit">
                       <span>
-                        <Button size="sm" variant="secondary" disabled>
+                        <Button size="sm" variant="secondary" className="disabled:!opacity-90" disabled>
                           Add
                         </Button>
                       </span>
@@ -319,11 +499,13 @@ export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
                   summary={summary}
                   insights={insights}
                   currency={currency}
-                  onTransfer={() => openAddForm('expense')}
-                  onTopUp={() => openAddForm('income')}
-                  onSave={() =>
+                  readOnly={readOnly}
+                  onTransfer={() => openQuickActionForm('expense')}
+                  onTopUp={() => openQuickActionForm('income')}
+                  onSave={() => {
+                    setFocusMode(false)
                     savingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }
+                  }}
                 />
               </div>
             </div>

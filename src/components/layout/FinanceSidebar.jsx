@@ -60,7 +60,7 @@ export const FinanceSidebar = ({
 }) => {
   return (
     <>
-      <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 lg:block">
+      <aside className="fixed inset-y-0 left-0 z-[70] hidden w-64 lg:block">
         <SidebarInner activeItem={activeItem} onSelect={onSelect} />
       </aside>
 

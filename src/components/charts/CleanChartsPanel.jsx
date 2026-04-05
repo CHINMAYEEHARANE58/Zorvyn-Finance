@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Bar,
@@ -14,6 +14,7 @@ import {
 import { filterTransactionsByTimeRange } from '../../utils/finance'
 import { formatCompactCurrency, formatCurrency } from '../../utils/formatters'
 import { Card } from '../ui/Card'
+import { ExpandablePanelModal } from '../ui/ExpandablePanelModal'
 
 const MotionPanel = motion.div
 
@@ -24,6 +25,15 @@ const RANGE_OPTIONS = [
 ]
 
 const toMonthKey = (dateString) => dateString.slice(0, 7)
+
+const ExpandIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M14 4h6v6" />
+    <path d="m10 14 10-10" />
+    <path d="M10 20H4v-6" />
+    <path d="m4 20 6-6" />
+  </svg>
+)
 
 const buildLineSeries = (transactions, range) => {
   const scoped = filterTransactionsByTimeRange(transactions, range)
@@ -115,6 +125,11 @@ export const CleanChartsPanel = ({
   defaultRange = 'month',
 }) => {
   const [range, setRange] = useState(defaultRange)
+  const [expandedChart, setExpandedChart] = useState(null)
+
+  useEffect(() => {
+    setRange(defaultRange)
+  }, [defaultRange])
 
   const lineData = useMemo(
     () => buildLineSeries(transactions, range),
@@ -126,114 +141,176 @@ export const CleanChartsPanel = ({
     [range, transactions],
   )
 
-  return (
-    <Card className="p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Analytics</p>
-          <p className="mt-1 text-sm text-gray-400">Balance trend and spending categories</p>
-        </div>
+  const renderLineChart = (heightClass = 'h-56', minWidth = 220) => (
+    <div className={`mt-3 ${heightClass} min-w-0`}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={minWidth}>
+        <LineChart data={lineData} margin={{ top: 8, right: 10, left: -8, bottom: 4 }}>
+          <CartesianGrid vertical={false} stroke="rgba(148,163,184,0.07)" />
+          <XAxis
+            dataKey="label"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            tickFormatter={(value) => formatCompactCurrency(value, currency)}
+          />
+          <Tooltip
+            cursor={{ stroke: 'rgba(148,163,184,0.2)' }}
+            content={<TooltipContent currency={currency} />}
+          />
+          <Line
+            type="monotone"
+            dataKey="balance"
+            stroke="#5b7cfa"
+            strokeWidth={2}
+            dot={false}
+            isAnimationActive
+            animationDuration={320}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  )
 
-        <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
-          {RANGE_OPTIONS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() => setRange(option.id)}
-                className={`rounded-md px-2.5 py-1 text-xs transition-all duration-200 ease-in-out ${
-                range === option.id
-                  ? 'bg-blue-500 text-white'
-                  : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
+  const renderBarChart = (heightClass = 'h-56', minWidth = 220) => (
+    <div className={`mt-3 ${heightClass} min-w-0`}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={minWidth}>
+        <BarChart data={barData} margin={{ top: 8, right: 8, left: -8, bottom: 4 }} barCategoryGap="26%">
+          <CartesianGrid vertical={false} stroke="rgba(148,163,184,0.07)" />
+          <XAxis
+            dataKey="label"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            tickFormatter={(value) => formatCompactCurrency(value, currency)}
+          />
+          <Tooltip
+            cursor={{ fill: 'rgba(148,163,184,0.08)' }}
+            content={<TooltipContent currency={currency} />}
+          />
+          <Bar
+            dataKey="value"
+            radius={[6, 6, 0, 0]}
+            fill="#5b7cfa"
+            fillOpacity={0.84}
+            maxBarSize={30}
+            isAnimationActive
+            animationDuration={320}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  )
 
-      <AnimatePresence mode="wait">
-        <MotionPanel
-          key={range}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.28, ease: 'easeInOut' }}
-          className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2"
+  const renderRangeControls = () => (
+    <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
+      {RANGE_OPTIONS.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          onClick={() => setRange(option.id)}
+          className={`rounded-md px-2.5 py-1 text-xs transition-all duration-200 ease-in-out ${
+            range === option.id
+              ? 'bg-blue-500 text-white'
+              : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
+          }`}
         >
-          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Balance Trend</p>
-            <div className="mt-3 h-56 min-w-0">
-              <ResponsiveContainer width="100%" height="100%" minWidth={220}>
-                <LineChart data={lineData} margin={{ top: 8, right: 10, left: -8, bottom: 4 }}>
-                  <CartesianGrid vertical={false} stroke="rgba(148,163,184,0.07)" />
-                  <XAxis
-                    dataKey="label"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                    tickFormatter={(value) => formatCompactCurrency(value, currency)}
-                  />
-                  <Tooltip
-                    cursor={{ stroke: 'rgba(148,163,184,0.2)' }}
-                    content={<TooltipContent currency={currency} />}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="balance"
-                    stroke="#5b7cfa"
-                    strokeWidth={2}
-                    dot={false}
-                    isAnimationActive
-                    animationDuration={320}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+
+  return (
+    <>
+      <Card className="p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Analytics</p>
+            <p className="mt-1 text-sm text-gray-400">Balance trend and spending categories</p>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Spending by Category</p>
-            <div className="mt-3 h-56 min-w-0">
-              <ResponsiveContainer width="100%" height="100%" minWidth={220}>
-                <BarChart data={barData} margin={{ top: 8, right: 8, left: -8, bottom: 4 }} barCategoryGap="26%">
-                  <CartesianGrid vertical={false} stroke="rgba(148,163,184,0.07)" />
-                  <XAxis
-                    dataKey="label"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                    tickFormatter={(value) => formatCompactCurrency(value, currency)}
-                  />
-                  <Tooltip
-                    cursor={{ fill: 'rgba(148,163,184,0.08)' }}
-                    content={<TooltipContent currency={currency} />}
-                  />
-                  <Bar
-                    dataKey="value"
-                    radius={[6, 6, 0, 0]}
-                    fill="#5b7cfa"
-                    fillOpacity={0.84}
-                    maxBarSize={30}
-                    isAnimationActive
-                    animationDuration={320}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+          {renderRangeControls()}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <MotionPanel
+            key={range}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.28, ease: 'easeInOut' }}
+            className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2"
+          >
+            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Balance Trend</p>
+                <button
+                  type="button"
+                  onClick={() => setExpandedChart('line')}
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-white/15 bg-white/5 px-2 text-[11px] text-gray-300 transition-all duration-200 hover:bg-white/10"
+                >
+                  <ExpandIcon />
+                  Expand
+                </button>
+              </div>
+              {renderLineChart()}
             </div>
+
+            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Spending by Category</p>
+                <button
+                  type="button"
+                  onClick={() => setExpandedChart('bar')}
+                  className="inline-flex h-7 items-center gap-1 rounded-md border border-white/15 bg-white/5 px-2 text-[11px] text-gray-300 transition-all duration-200 hover:bg-white/10"
+                >
+                  <ExpandIcon />
+                  Expand
+                </button>
+              </div>
+              {renderBarChart()}
+            </div>
+          </MotionPanel>
+        </AnimatePresence>
+      </Card>
+
+      <ExpandablePanelModal
+        open={expandedChart === 'line'}
+        title="Balance Trend"
+        subtitle="Expanded analytics view"
+        onClose={() => setExpandedChart(null)}
+      >
+        <div className="space-y-3">
+          <div className="flex justify-end">{renderRangeControls()}</div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            {renderLineChart('h-[64vh]', 420)}
           </div>
-        </MotionPanel>
-      </AnimatePresence>
-    </Card>
+        </div>
+      </ExpandablePanelModal>
+
+      <ExpandablePanelModal
+        open={expandedChart === 'bar'}
+        title="Spending by Category"
+        subtitle="Expanded analytics view"
+        onClose={() => setExpandedChart(null)}
+      >
+        <div className="space-y-3">
+          <div className="flex justify-end">{renderRangeControls()}</div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            {renderBarChart('h-[64vh]', 420)}
+          </div>
+        </div>
+      </ExpandablePanelModal>
+    </>
   )
 }

@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 import { formatCurrency } from '../../utils/formatters'
-import { MiniCalendarView } from './MiniCalendarView'
 import { Card } from '../ui/Card'
+import { ExpandablePanelModal } from '../ui/ExpandablePanelModal'
+import { MiniCalendarView } from './MiniCalendarView'
 
 const MotionSlide = motion.div
 
@@ -133,13 +134,23 @@ const ActionIcon = ({ variant = 'plus' }) => {
   )
 }
 
-const QuickActionTile = ({ label, onClick, icon }) => (
+const ExpandIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M14 4h6v6" />
+    <path d="m10 14 10-10" />
+    <path d="M10 20H4v-6" />
+    <path d="m4 20 6-6" />
+  </svg>
+)
+
+const QuickActionTile = ({ label, onClick, icon, disabled = false }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/[0.08] hover:text-white active:scale-95"
+    disabled={disabled}
+    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/[0.08] hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
   >
-    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-slate-800 text-gray-200">
+    <span className="quick-action-icon-chip inline-flex h-7 w-7 items-center justify-center rounded-lg border border-blue-400/25 bg-blue-500/15 text-blue-200">
       <ActionIcon variant={icon} />
     </span>
     {label}
@@ -168,6 +179,7 @@ export const DashboardRightPanel = ({
   summary,
   insights,
   currency = 'USD',
+  readOnly = false,
   onTransfer,
   onTopUp,
   onSave,
@@ -175,7 +187,10 @@ export const DashboardRightPanel = ({
   const [range, setRange] = useState('week')
   const [activeSlide, setActiveSlide] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [expandedPanel, setExpandedPanel] = useState(null)
+  const [actionMessage, setActionMessage] = useState('')
 
+  const gradientId = useId().replace(/:/g, '')
   const goalUsd = useMemo(() => readGoalUsd(userId || 'guest'), [userId])
   const goalPercentRaw = goalUsd > 0 ? Math.min(100, (summary.totalBalance / goalUsd) * 100) : 0
   const goalPercent = Math.round(useAnimatedNumber(goalPercentRaw, 300))
@@ -257,6 +272,15 @@ export const DashboardRightPanel = ({
     return () => window.clearInterval(timer)
   }, [isPaused, slides.length])
 
+  useEffect(() => {
+    if (!actionMessage) return undefined
+    const timer = window.setTimeout(() => {
+      setActionMessage('')
+    }, 2200)
+
+    return () => window.clearTimeout(timer)
+  }, [actionMessage])
+
   const onDragEnd = (_, info) => {
     if (info.offset.x <= -40) {
       setActiveSlide((previous) => (previous + 1) % slides.length)
@@ -268,98 +292,175 @@ export const DashboardRightPanel = ({
     }
   }
 
-  return (
-    <div id="reports" className="space-y-4">
-      <Card className="p-4">
-        <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Quick Actions</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <QuickActionTile label="Transfer" onClick={onTransfer} icon="arrow" />
-          <QuickActionTile label="Top Up" onClick={onTopUp} icon="plus" />
-          <QuickActionTile label="Save" onClick={onSave} icon="wallet" />
-        </div>
-      </Card>
+  const renderMiniFlowChart = (heightClass = 'h-40', minWidth = 220) => (
+    <div className={`mt-4 w-full ${heightClass}`}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={minWidth}>
+        <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#5b7cfa" stopOpacity={0.32} />
+              <stop offset="95%" stopColor="#5b7cfa" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="label"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#94a3b8', fontSize: 10 }}
+          />
+          <Tooltip
+            cursor={{ stroke: 'rgba(148,163,184,0.2)' }}
+            content={<CustomTooltip currency={currency} />}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#5b7cfa"
+            strokeWidth={2}
+            fill={`url(#${gradientId})`}
+            isAnimationActive
+            animationDuration={300}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
 
-      <Card id="wallets" className="p-4">
-        <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Highlights</p>
-        <div
-          className="mt-3 overflow-hidden"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+  const renderRangeControls = (buttonClass = 'text-[11px]') => (
+    <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
+      {RANGE_OPTIONS.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          onClick={() => setRange(option.id)}
+          className={`rounded-md px-2 py-1 ${buttonClass} transition-all duration-200 ease-in-out ${
+            range === option.id
+              ? 'bg-blue-500 text-white'
+              : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
+          }`}
         >
-          <AnimatePresence mode="wait">
-            <MotionSlide
-              key={slides[activeSlide].id}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.24}
-              onDragEnd={onDragEnd}
-              initial={{ opacity: 0, x: 18 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -18 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-            >
-              {slides[activeSlide].content}
-            </MotionSlide>
-          </AnimatePresence>
-          <CarouselDots count={slides.length} activeIndex={activeSlide} onSelect={setActiveSlide} />
-        </div>
-      </Card>
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
 
-      <Card className="p-4">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Mini Flow Chart</p>
-          <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
-            {RANGE_OPTIONS.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => setRange(option.id)}
-                className={`rounded-md px-2 py-1 text-[11px] transition-all duration-200 ease-in-out ${
-                  range === option.id
-                    ? 'bg-blue-500 text-white'
-                    : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
-                }`}
+  const handleQuickAction = (action, successText) => {
+    if (readOnly) {
+      setActionMessage('Switch role to Admin to use quick actions.')
+      return
+    }
+
+    if (typeof action === 'function') {
+      action()
+      setActionMessage(successText)
+      return
+    }
+
+    setActionMessage('Action is not available right now.')
+  }
+
+  return (
+    <>
+      <div id="reports" className="space-y-4">
+        <Card className="p-4">
+          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Quick Actions</p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <QuickActionTile
+              label="Transfer"
+              onClick={() => handleQuickAction(onTransfer, 'Transfer entry opened.')}
+              icon="arrow"
+              disabled={readOnly}
+            />
+            <QuickActionTile
+              label="Top Up"
+              onClick={() => handleQuickAction(onTopUp, 'Top-up entry opened.')}
+              icon="plus"
+              disabled={readOnly}
+            />
+            <QuickActionTile
+              label="Save"
+              onClick={() => handleQuickAction(onSave, 'Savings section opened.')}
+              icon="wallet"
+              disabled={false}
+            />
+          </div>
+          <AnimatePresence>
+            {actionMessage ? (
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="mt-2 rounded-lg border border-blue-400/25 bg-blue-500/10 px-2.5 py-2 text-xs text-blue-200"
               >
-                {option.label}
+                {actionMessage}
+              </motion.p>
+            ) : null}
+          </AnimatePresence>
+        </Card>
+
+        <MiniCalendarView transactions={transactions} currency={currency} />
+
+        <Card id="wallets" className="p-4">
+          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Highlights</p>
+          <div
+            className="mt-3 overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <AnimatePresence mode="wait">
+              <MotionSlide
+                key={slides[activeSlide].id}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.24}
+                onDragEnd={onDragEnd}
+                initial={{ opacity: 0, x: 18 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -18 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                {slides[activeSlide].content}
+              </MotionSlide>
+            </AnimatePresence>
+            <CarouselDots count={slides.length} activeIndex={activeSlide} onSelect={setActiveSlide} />
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Mini Flow Chart</p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setExpandedPanel('miniFlow')}
+                className="inline-flex h-7 items-center gap-1 rounded-md border border-white/15 bg-white/5 px-2 text-[11px] text-gray-300 transition-all duration-200 hover:bg-white/10"
+              >
+                <ExpandIcon />
+                Expand
               </button>
-            ))}
+              {renderRangeControls()}
+            </div>
+          </div>
+
+          {renderMiniFlowChart()}
+        </Card>
+      </div>
+
+      <ExpandablePanelModal
+        open={expandedPanel === 'miniFlow'}
+        title="Mini Flow Chart"
+        subtitle="Expanded cashflow trend"
+        onClose={() => setExpandedPanel(null)}
+      >
+        <div className="space-y-3">
+          <div className="flex justify-end">{renderRangeControls('text-xs')}</div>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            {renderMiniFlowChart('h-[64vh]', 420)}
           </div>
         </div>
-
-        <div className="mt-4 h-40 w-full">
-          <ResponsiveContainer width="100%" height="100%" minWidth={220}>
-            <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
-              <defs>
-                <linearGradient id="miniFlow" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#5b7cfa" stopOpacity={0.32} />
-                  <stop offset="95%" stopColor="#5b7cfa" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="label"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#94a3b8', fontSize: 10 }}
-              />
-              <Tooltip
-                cursor={{ stroke: 'rgba(148,163,184,0.2)' }}
-                content={<CustomTooltip currency={currency} />}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#5b7cfa"
-                strokeWidth={2}
-                fill="url(#miniFlow)"
-                isAnimationActive
-                animationDuration={300}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-
-      <MiniCalendarView transactions={transactions} currency={currency} />
-    </div>
+      </ExpandablePanelModal>
+    </>
   )
 }

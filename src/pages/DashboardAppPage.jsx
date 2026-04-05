@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { FinanceSidebar } from '../components/layout/FinanceSidebar'
-import { PageTransition } from '../components/ui/PageTransition'
 import { DashboardPage } from './DashboardPage'
 
 export const DashboardAppPage = () => {
@@ -8,24 +7,22 @@ export const DashboardAppPage = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   return (
-    <PageTransition>
-      <div className="zorvyn-hero min-h-screen">
-        <FinanceSidebar
-          activeItem={activeItem}
-          onSelect={setActiveItem}
-          isMobileOpen={isMobileSidebarOpen}
-          onCloseMobile={() => setIsMobileSidebarOpen(false)}
-        />
+    <div className="zorvyn-hero min-h-screen">
+      <FinanceSidebar
+        activeItem={activeItem}
+        onSelect={setActiveItem}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
+      />
 
-        <main className="lg:ml-64">
-          <div className="container-custom py-4 md:py-6">
-            <DashboardPage
-              activeSidebarItem={activeItem}
-              onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-            />
-          </div>
-        </main>
-      </div>
-    </PageTransition>
+      <main className="animate-fade-in min-h-screen lg:ml-64">
+        <div className="container-custom py-4 md:py-6">
+          <DashboardPage
+            activeSidebarItem={activeItem}
+            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          />
+        </div>
+      </main>
+    </div>
   )
 }

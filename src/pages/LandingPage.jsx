@@ -9,16 +9,16 @@ const MotionDiv = motion.div
 
 const features = [
   {
-    title: 'Secure Infrastructure',
-    description: 'Bank-grade architecture with clean audit-ready financial records.',
+    title: 'Unified Money View',
+    description: 'See income, expenses, and balances in one clean operating dashboard.',
   },
   {
-    title: 'Compliant Workflows',
-    description: 'Structured tracking and role-based visibility for finance operations.',
+    title: 'Practical Controls',
+    description: 'Use role-aware actions and focused workflows without backend complexity.',
   },
   {
-    title: 'Intelligent Insights',
-    description: 'Actionable analytics for budgets, trends, and healthy savings behavior.',
+    title: 'Decision Insights',
+    description: 'Get quick signals on spending patterns, savings progress, and category risks.',
   },
 ]
 
@@ -39,19 +39,19 @@ export const LandingPage = () => {
             >
               <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                Trusted by finance-first teams
+                Built for focused finance workflows
               </p>
 
               <h1 className="mt-7 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-7xl">
-                Building <span className="text-gradient-fintech">Secure</span>,{' '}
-                <span className="text-gradient-fintech">Compliant</span>, and{' '}
-                <span className="text-gradient-fintech">Intelligent</span>{' '}
-                Financial Systems
+                Manage cashflow with{' '}
+                <span className="text-gradient-fintech">clarity</span>,{' '}
+                <span className="text-gradient-fintech">control</span>, and{' '}
+                <span className="text-gradient-fintech">confidence</span>
               </h1>
 
               <p className="mx-auto mt-6 max-w-3xl text-base text-gray-400 sm:text-lg">
-                Enterprise-grade financial infrastructure that scales with you. From startups to
-                enterprises, manage money with clarity and confidence.
+                A clean finance workspace to track transactions, monitor trends, and make better
+                monthly decisions without noise.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -65,7 +65,7 @@ export const LandingPage = () => {
                       Login
                     </Button>
                     <Button variant="primary" onClick={() => navigate('/signup')}>
-                      Contact Sales
+                      Get Started
                     </Button>
                   </>
                 )}
@@ -115,7 +115,7 @@ export const LandingPage = () => {
           <Card className="p-6">
             <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Pricing</p>
             <p className="mt-2 text-sm text-gray-300">
-              Flexible plans for startups, growing teams, and enterprise operations.
+              Simple plans for personal use, teams, and growing finance operations.
             </p>
           </Card>
         </section>
@@ -124,7 +124,7 @@ export const LandingPage = () => {
           <Card className="p-6">
             <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Company</p>
             <p className="mt-2 text-sm text-gray-300">
-              Zorvyn helps organizations build secure and intelligent financial systems.
+              We design thoughtful financial products focused on speed, clarity, and usability.
             </p>
           </Card>
         </section>

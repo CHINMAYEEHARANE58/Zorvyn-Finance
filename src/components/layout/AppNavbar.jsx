@@ -70,30 +70,6 @@ export const AppNavbar = () => {
           <span className="text-sm font-semibold tracking-wide text-white">zorvyn</span>
         </Link>
 
-        <div className="hidden items-center gap-7 lg:flex">
-          <NavLink to="/" end className={navLinkClassName}>
-            {({ isActive }) => (
-              <>
-                Home
-                <span
-                  className={`absolute -bottom-2 left-0 h-0.5 w-full bg-blue-400 transition-opacity duration-200 ${
-                    isActive ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-              </>
-            )}
-          </NavLink>
-          <a href="/#features" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
-            Features
-          </a>
-          <a href="/#pricing" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
-            Pricing
-          </a>
-          <a href="/#company" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
-            Company
-          </a>
-        </div>
-
         <div className="flex items-center gap-2 md:gap-3">
           {isAuthenticated ? (
             <>
@@ -169,7 +145,7 @@ export const AppNavbar = () => {
                 Login
               </Button>
               <Button size="sm" variant="primary" onClick={() => navigate('/signup')}>
-                Contact Sales
+                Get Started
               </Button>
             </>
           )}

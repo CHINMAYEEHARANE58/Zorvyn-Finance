@@ -7,14 +7,26 @@ import { EmptyState } from '../common/EmptyState'
 import { Tooltip } from '../ui/Tooltip'
 
 const EditIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+  <svg
+    viewBox="0 0 24 24"
+    className="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.1"
+  >
     <path d="M12 20h9" />
     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
   </svg>
 )
 
 const DeleteIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+  <svg
+    viewBox="0 0 24 24"
+    className="h-[18px] w-[18px]"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.1"
+  >
     <path d="M3 6h18" />
     <path d="M8 6V4h8v2" />
     <path d="M19 6l-1 14H6L5 6" />
@@ -67,15 +79,12 @@ const getCategoryClass = (type) => {
 const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
   const disabledTooltip = role === 'viewer' ? 'Switch to admin to edit' : null
   const initials = (transaction.category || 'O').slice(0, 2).toUpperCase()
-  const actionsClassName =
-    role === 'admin'
-      ? 'mt-2 flex justify-end gap-1 opacity-100'
-      : 'mt-2 flex justify-end gap-1 opacity-70'
+  const actionsClassName = 'mt-2 flex justify-end gap-2'
 
   return (
     <li className="group relative pl-12">
-      <span className="absolute left-[14px] top-0 h-full w-px bg-white/10" />
-      <span className="absolute left-0 top-0 inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-slate-800 text-[10px] font-semibold text-gray-300">
+      <span className="timeline-connector-line absolute left-[14px] top-0 h-full w-px" />
+      <span className="timeline-initial-badge absolute left-0 top-0 inline-flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-semibold">
         {initials}
       </span>
 
@@ -106,28 +115,30 @@ const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
           <Tooltip content={disabledTooltip}>
             <span>
               <Button
-                size="icon"
+                size="sm"
                 variant="secondary"
-                className="h-8 w-8"
+                className="h-8 px-2.5 !border-white/25 !bg-white/12 !text-gray-100 hover:!bg-white/18 disabled:!opacity-90"
                 onClick={() => onEdit(transaction)}
                 disabled={role === 'viewer'}
                 aria-label="Edit activity"
               >
                 <EditIcon />
+                <span className="text-[11px]">Edit</span>
               </Button>
             </span>
           </Tooltip>
           <Tooltip content={disabledTooltip}>
             <span>
               <Button
-                size="icon"
+                size="sm"
                 variant="danger"
-                className="h-8 w-8"
+                className="h-8 px-2.5 !border-red-400/45 !bg-red-500/16 !text-red-300 hover:!bg-red-500/26 disabled:!opacity-90"
                 onClick={() => onDelete(transaction.id)}
                 disabled={role === 'viewer'}
                 aria-label="Delete activity"
               >
                 <DeleteIcon />
+                <span className="text-[11px]">Delete</span>
               </Button>
             </span>
           </Tooltip>
