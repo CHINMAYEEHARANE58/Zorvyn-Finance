@@ -21,6 +21,23 @@ export const AuthCard = ({ title, subtitle, children }) => {
           <p className="mt-3 text-sm text-gray-400">
             Track transactions, understand your spending, and improve savings with a focused dashboard.
           </p>
+
+          <img
+            src="/images/auth-illustration.svg"
+            alt="Finance planning illustration"
+            className="mt-6 w-full rounded-xl border border-white/10 object-cover shadow-sm"
+          />
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-white/10 bg-slate-900/65 px-3 py-2">
+              <p className="text-[11px] text-gray-500">Savings Trend</p>
+              <p className="mt-1 text-sm font-semibold text-emerald-300">+12%</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-slate-900/65 px-3 py-2">
+              <p className="text-[11px] text-gray-500">Spending Health</p>
+              <p className="mt-1 text-sm font-semibold text-white">Healthy</p>
+            </div>
+          </div>
         </MotionAside>
 
         <MotionSection

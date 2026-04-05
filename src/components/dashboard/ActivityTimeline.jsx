@@ -67,6 +67,10 @@ const getCategoryClass = (type) => {
 const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
   const disabledTooltip = role === 'viewer' ? 'Switch to admin to edit' : null
   const initials = (transaction.category || 'O').slice(0, 2).toUpperCase()
+  const actionsClassName =
+    role === 'admin'
+      ? 'mt-2 flex justify-end gap-1 opacity-100'
+      : 'mt-2 flex justify-end gap-1 opacity-70'
 
   return (
     <li className="group relative pl-12">
@@ -98,12 +102,13 @@ const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
           </div>
         </div>
 
-        <div className="mt-2 flex justify-end gap-1 opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100">
+        <div className={actionsClassName}>
           <Tooltip content={disabledTooltip}>
             <span>
               <Button
                 size="icon"
-                variant="ghost"
+                variant="secondary"
+                className="h-8 w-8"
                 onClick={() => onEdit(transaction)}
                 disabled={role === 'viewer'}
                 aria-label="Edit activity"
@@ -116,7 +121,8 @@ const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
             <span>
               <Button
                 size="icon"
-                variant="ghost"
+                variant="danger"
+                className="h-8 w-8"
                 onClick={() => onDelete(transaction.id)}
                 disabled={role === 'viewer'}
                 aria-label="Delete activity"

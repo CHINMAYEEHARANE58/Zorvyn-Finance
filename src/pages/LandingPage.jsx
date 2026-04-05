@@ -73,31 +73,25 @@ export const LandingPage = () => {
             whileHover={{ y: -4, rotateX: 2, rotateY: -2 }}
             style={{ transformPerspective: 1000 }}
           >
-            <Card className="p-6">
+            <Card className="p-4 md:p-5">
               <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Dashboard Preview</p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
-                  <p className="text-xs text-gray-500">Balance</p>
-                  <p className="mt-1 text-2xl font-semibold text-white">$18,400</p>
+              <img
+                src="/images/landing-dashboard.svg"
+                alt="Finance dashboard mockup"
+                className="mt-3 w-full rounded-xl border border-white/10 object-cover shadow-sm"
+              />
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
+                  <p className="text-[11px] text-gray-500">Balance</p>
+                  <p className="mt-1 text-sm font-semibold text-white">$18.7K</p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
-                  <p className="text-xs text-gray-500">Expenses</p>
-                  <p className="mt-1 text-2xl font-semibold text-red-300">$3,920</p>
+                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
+                  <p className="text-[11px] text-gray-500">Income</p>
+                  <p className="mt-1 text-sm font-semibold text-emerald-300">$21.2K</p>
                 </div>
-              </div>
-              <div className="mt-3 rounded-xl border border-white/10 bg-slate-900/60 p-3">
-                <p className="text-xs text-gray-500">This Month</p>
-                <p className="mt-1 text-sm text-gray-300">Savings improved by 12% with lower discretionary spending.</p>
-              </div>
-              <div className="mt-3 rounded-xl border border-white/10 bg-slate-900/60 p-3">
-                <p className="text-xs text-gray-500">Weekly Trend</p>
-                <div className="mt-2 flex h-11 items-end gap-2">
-                  <span className="h-4 w-2 rounded-sm bg-white/20" />
-                  <span className="h-7 w-2 rounded-sm bg-white/30" />
-                  <span className="h-8 w-2 rounded-sm bg-sky-400/70" />
-                  <span className="h-6 w-2 rounded-sm bg-white/25" />
-                  <span className="h-9 w-2 rounded-sm bg-sky-400/90" />
-                  <span className="h-7 w-2 rounded-sm bg-white/30" />
+                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
+                  <p className="text-[11px] text-gray-500">Expenses</p>
+                  <p className="mt-1 text-sm font-semibold text-red-300">$2.5K</p>
                 </div>
               </div>
             </Card>
@@ -136,4 +130,3 @@ export const LandingPage = () => {
     </PageTransition>
   )
 }
-

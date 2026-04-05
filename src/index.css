@@ -18,32 +18,47 @@
     font-family: 'Inter', sans-serif;
   }
 
-  :root.light .bg-slate-900,
+  :root.light body {
+    background-color: rgb(248 250 252);
+    color: rgb(15 23 42);
+  }
+
+  :root.light .bg-slate-950,
+  :root.light .bg-slate-900 {
+    background-color: rgb(248 250 252) !important;
+  }
+
   :root.light .bg-slate-900\/55,
   :root.light .bg-slate-900\/60,
   :root.light .bg-slate-900\/70,
   :root.light .bg-slate-900\/85,
   :root.light .bg-slate-900\/90,
   :root.light .bg-slate-900\/95,
-  :root.light .bg-slate-950,
-  :root.light .bg-slate-950\/60,
   :root.light .bg-slate-800\/45,
   :root.light .bg-slate-800\/55,
   :root.light .bg-slate-800\/60,
   :root.light .bg-slate-800\/65 {
-    background-color: rgb(255 255 255 / 0.92) !important;
+    background-color: rgb(255 255 255) !important;
+  }
+
+  :root.light .bg-slate-950\/60,
+  :root.light .bg-slate-900\/45,
+  :root.light .bg-slate-900\/55,
+  :root.light .bg-slate-900\/60,
+  :root.light .bg-slate-900\/70 {
+    background-color: rgb(241 245 249) !important;
   }
 
   :root.light .border-white\/10,
   :root.light .border-white\/15,
   :root.light .border-white\/30 {
-    border-color: rgb(15 23 42 / 0.12) !important;
+    border-color: rgb(226 232 240) !important;
   }
 
   :root.light .bg-white\/5,
   :root.light .bg-white\/6,
   :root.light .bg-white\/10 {
-    background-color: rgb(15 23 42 / 0.04) !important;
+    background-color: rgb(241 245 249) !important;
   }
 
   :root.light .text-white,
@@ -61,6 +76,14 @@
     color: rgb(100 116 139) !important;
   }
 
+  :root.light .text-gray-600 {
+    color: rgb(71 85 105) !important;
+  }
+
+  :root.light .bg-sky-500\/90 {
+    background-color: rgb(3 105 161 / 0.92) !important;
+  }
+
   :root.light .text-emerald-300 {
     color: rgb(5 150 105) !important;
   }
@@ -72,6 +95,15 @@
   :root.light .text-sky-300,
   :root.light .text-sky-200 {
     color: rgb(2 132 199) !important;
+  }
+
+  :root.light .from-slate-800 {
+    --tw-gradient-from: rgb(241 245 249) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgb(241 245 249 / 0) var(--tw-gradient-to-position) !important;
+  }
+
+  :root.light .to-slate-900 {
+    --tw-gradient-to: rgb(226 232 240) var(--tw-gradient-to-position) !important;
   }
 
   :root.light .shadow-sm,
