@@ -1,16 +1,16 @@
 import { memo } from 'react'
 
 const BASE_STYLES =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium tracking-[0.01em] transition-all duration-200 ease-in-out active:scale-95 disabled:cursor-not-allowed disabled:opacity-50'
 
 const VARIANT_STYLES = {
   primary:
-    'bg-sky-500/90 text-white hover:brightness-105 hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60',
+    'border border-blue-400/40 bg-gradient-to-b from-blue-500 to-blue-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_20px_rgba(37,99,235,0.28)] hover:-translate-y-0.5 hover:from-blue-500 hover:to-blue-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.26),0_14px_28px_rgba(37,99,235,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60',
   secondary:
-    'border border-white/10 bg-white/5 text-gray-200 hover:bg-white/10 hover:-translate-y-0.5',
-  ghost: 'text-gray-300 hover:bg-white/5 hover:text-white',
+    'border border-white/12 bg-white/5 text-gray-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] hover:-translate-y-0.5 hover:bg-white/[0.09] hover:border-white/20',
+  ghost: 'text-gray-300 hover:bg-white/5 hover:text-white hover:-translate-y-0.5',
   danger:
-    'border border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/15 hover:-translate-y-0.5',
+    'border border-red-500/35 bg-red-500/12 text-red-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:-translate-y-0.5 hover:bg-red-500/18 hover:border-red-400/45',
 }
 
 const SIZE_STYLES = {

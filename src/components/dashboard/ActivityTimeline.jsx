@@ -79,7 +79,7 @@ const TimelineItem = ({ transaction, role, onEdit, onDelete, currency }) => {
         {initials}
       </span>
 
-      <div className="rounded-xl border border-white/10 bg-slate-900/55 p-3 transition-all duration-200 ease-in-out group-hover:bg-slate-900/75">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-3 transition-all duration-200 ease-in-out group-hover:bg-white/[0.08]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-white">{transaction.category}</p>
@@ -182,7 +182,7 @@ export const ActivityTimeline = ({
         <select
           value={filters.selectedType}
           onChange={(event) => onFilterChange('selectedType', event.target.value)}
-          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/70"
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/70"
         >
           <option value="all">All types</option>
           <option value="income">Income</option>
@@ -192,7 +192,7 @@ export const ActivityTimeline = ({
         <select
           value={filters.selectedCategory}
           onChange={(event) => onFilterChange('selectedCategory', event.target.value)}
-          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/70"
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/70"
         >
           <option value="all">All categories</option>
           {categories.map((category) => (
@@ -205,7 +205,7 @@ export const ActivityTimeline = ({
         <select
           value={filters.sortBy}
           onChange={(event) => onFilterChange('sortBy', event.target.value)}
-          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/70"
+          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/70"
         >
           <option value="date-desc">Newest first</option>
           <option value="date-asc">Oldest first</option>

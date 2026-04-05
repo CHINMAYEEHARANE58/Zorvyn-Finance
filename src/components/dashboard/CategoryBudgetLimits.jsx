@@ -109,7 +109,7 @@ export const CategoryBudgetLimits = ({
         <select
           value={category}
           onChange={(event) => setCategory(event.target.value)}
-          className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
         >
           {availableCategories.map((categoryName) => (
             <option key={categoryName} value={categoryName}>
@@ -123,7 +123,7 @@ export const CategoryBudgetLimits = ({
           min="1"
           value={budgetInput}
           onChange={(event) => setBudgetInput(event.target.value)}
-          className="w-32 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+          className="w-32 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
           placeholder="Budget"
         />
 
@@ -147,7 +147,7 @@ export const CategoryBudgetLimits = ({
                   : 'Within limit'
 
             return (
-              <div key={entry.category} className="rounded-lg border border-white/10 bg-slate-900/55 p-3">
+              <div key={entry.category} className="rounded-lg border border-white/10 bg-white/5 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-white">{entry.category}</p>
@@ -177,7 +177,7 @@ export const CategoryBudgetLimits = ({
             )
           })
         ) : (
-          <p className="rounded-lg border border-white/10 bg-slate-900/55 px-3 py-2 text-sm text-gray-400">
+          <p className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-400">
             No category budgets set yet.
           </p>
         )}

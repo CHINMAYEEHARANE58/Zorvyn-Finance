@@ -113,7 +113,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
         type="date"
         value={formValues.date}
         onChange={(event) => handleChange('date', event.target.value)}
-        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.14)]"
       />
 
       <input
@@ -122,7 +122,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
         placeholder="Amount"
         value={formValues.amount}
         onChange={(event) => handleChange('amount', event.target.value)}
-        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.14)]"
         required
       />
 
@@ -133,7 +133,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
         onChange={(event) => {
           handleChange('description', event.target.value)
         }}
-        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.14)]"
       />
 
       <input
@@ -145,7 +145,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
           setHasManualCategorySelection(true)
           handleChange('category', event.target.value)
         }}
-        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.14)]"
         required
       />
       <datalist id="category-options">
@@ -168,7 +168,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
             return next
           })
         }}
-        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.14)]"
       >
         <option value="income">Income</option>
         <option value="expense">Expense</option>
@@ -188,7 +188,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
           Suggested category from description:{' '}
           <button
             type="button"
-            className="font-medium text-sky-300 hover:text-sky-200"
+            className="font-medium text-blue-300 hover:text-blue-200"
             onClick={() => {
               setHasManualCategorySelection(false)
               handleChange('category', suggestedCategory)

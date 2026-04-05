@@ -57,7 +57,7 @@ const ActionButtons = ({ role, onEdit, onDelete, transaction }) => {
 }
 
 const MobileTransactionCard = ({ transaction, role, onEdit, onDelete, currency }) => (
-  <article className="rounded-xl border border-white/10 bg-slate-800/65 p-4 shadow-sm transition-all duration-200 ease-in-out hover:translate-y-1 hover:shadow-md">
+  <article className="panel-surface p-4">
     <div className="flex items-start justify-between gap-3">
       <div>
         <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>

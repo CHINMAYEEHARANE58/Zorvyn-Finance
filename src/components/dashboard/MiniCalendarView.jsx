@@ -103,13 +103,13 @@ export const MiniCalendarView = ({ transactions, currency = 'USD' }) => {
               onClick={() => setSelectedDateKey(cell.dateKey)}
               className={`relative rounded-md border px-1 py-2 text-xs transition-all duration-200 ${
                 selectedDateKey === cell.dateKey
-                  ? 'border-sky-400/60 bg-sky-500/10 text-sky-200'
-                  : 'border-transparent bg-slate-900/45 text-gray-300 hover:bg-white/8'
+                  ? 'border-blue-400/60 bg-blue-500/10 text-blue-200'
+                  : 'border-transparent bg-white/5 text-gray-300 hover:bg-white/[0.08]'
               }`}
             >
               {cell.day}
               {cell.count > 0 ? (
-                <span className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-sky-300" />
+                <span className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-blue-300" />
               ) : null}
             </button>
           ) : (
@@ -126,7 +126,7 @@ export const MiniCalendarView = ({ transactions, currency = 'USD' }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22, ease: 'easeInOut' }}
-            className="mt-4 rounded-lg border border-white/10 bg-slate-900/55 p-3"
+            className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3"
           >
             <p className="text-xs uppercase tracking-[0.14em] text-gray-500">{selectedDateKey}</p>
             {selectedDayTransactions.length ? (

@@ -37,7 +37,7 @@ export const FinancialHealthScoreCard = ({ score = 0, label = 'Average' }) => {
           style={{ background: ringBackground }}
           className="relative grid h-16 w-16 place-items-center rounded-full"
         >
-          <div className="grid h-12 w-12 place-items-center rounded-full bg-slate-900/70 text-sm font-semibold text-white">
+          <div className="grid h-12 w-12 place-items-center rounded-full bg-white/5 text-sm font-semibold text-white">
             {safeScore}
           </div>
         </div>
@@ -50,4 +50,3 @@ export const FinancialHealthScoreCard = ({ score = 0, label = 'Average' }) => {
     </Card>
   )
 }
-

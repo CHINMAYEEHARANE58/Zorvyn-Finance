@@ -32,7 +32,7 @@ const RangeButton = ({ label, value, activeValue, onSelect }) => (
     onClick={() => onSelect(value)}
     className={`rounded-md px-2.5 py-1 text-xs transition-all duration-200 ease-in-out ${
       activeValue === value
-        ? 'bg-white text-slate-900'
+        ? 'border border-blue-400/35 bg-blue-500/90 text-white shadow-[0_8px_18px_rgba(37,99,235,0.25)]'
         : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
     }`}
   >
@@ -56,18 +56,23 @@ export const DashboardTopBar = ({
   onOpenProfile,
 }) => {
   return (
-    <header id="dashboard" className="rounded-xl border border-white/10 bg-slate-800/60 px-4 py-3 md:px-5">
+    <header
+      id="dashboard"
+      className="panel-surface px-4 py-3 md:px-5"
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={onOpenMobileSidebar}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 transition-all duration-200 ease-in-out hover:bg-white/10 lg:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:bg-white/10 lg:hidden"
             aria-label="Open sidebar"
           >
             <MenuIcon />
           </button>
-          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">Dashboard</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
+            <span className="text-gradient-fintech">Dashboard</span>
+          </h1>
         </div>
 
         <div className="flex flex-1 flex-wrap items-center justify-end gap-2">
@@ -76,13 +81,13 @@ export const DashboardTopBar = ({
             value={searchTerm}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search transactions..."
-            className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-sky-400/70 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)] sm:w-64"
+            className="w-full rounded-xl border border-white/10 bg-slate-900/65 px-3 py-2 text-sm text-gray-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-blue-400/70 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.18)] sm:w-64"
           />
 
           <button
             type="button"
             onClick={onToggleTheme}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
             aria-label="Toggle theme"
           >
             <ThemeIcon darkMode={darkMode} />
@@ -90,7 +95,7 @@ export const DashboardTopBar = ({
 
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
             aria-label="Notifications"
           >
             <BellIcon />
@@ -99,7 +104,7 @@ export const DashboardTopBar = ({
           <button
             type="button"
             onClick={onOpenProfile}
-            className="inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 px-2.5 text-sm font-medium text-gray-200 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
+            className="inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 px-2.5 text-sm font-medium text-gray-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
             aria-label="Open profile"
           >
             {user?.name?.charAt(0)?.toUpperCase() || 'U'}
@@ -109,7 +114,7 @@ export const DashboardTopBar = ({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-gray-300">
+          <label className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-gray-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
             <span className="text-gray-400">Role</span>
             <select
               value={role}
@@ -121,7 +126,7 @@ export const DashboardTopBar = ({
             </select>
           </label>
 
-          <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-slate-900/70 p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
             <RangeButton
               label="Week"
               value="week"

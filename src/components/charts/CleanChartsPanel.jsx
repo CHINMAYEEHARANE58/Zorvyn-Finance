@@ -134,15 +134,15 @@ export const CleanChartsPanel = ({
           <p className="mt-1 text-sm text-gray-400">Balance trend and spending categories</p>
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-slate-900/70 p-1">
+        <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
           {RANGE_OPTIONS.map((option) => (
             <button
               key={option.id}
               type="button"
               onClick={() => setRange(option.id)}
-              className={`rounded-md px-2.5 py-1 text-xs transition-all duration-200 ease-in-out ${
+                className={`rounded-md px-2.5 py-1 text-xs transition-all duration-200 ease-in-out ${
                 range === option.id
-                  ? 'bg-white text-slate-900'
+                  ? 'bg-blue-500 text-white'
                   : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
               }`}
             >
@@ -161,7 +161,7 @@ export const CleanChartsPanel = ({
           transition={{ duration: 0.28, ease: 'easeInOut' }}
           className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2"
         >
-          <div className="rounded-xl border border-white/10 bg-slate-900/45 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Balance Trend</p>
             <div className="mt-3 h-56 min-w-0">
               <ResponsiveContainer width="100%" height="100%" minWidth={220}>
@@ -186,7 +186,7 @@ export const CleanChartsPanel = ({
                   <Line
                     type="monotone"
                     dataKey="balance"
-                    stroke="#60a5fa"
+                    stroke="#5b7cfa"
                     strokeWidth={2}
                     dot={false}
                     isAnimationActive
@@ -197,7 +197,7 @@ export const CleanChartsPanel = ({
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-slate-900/45 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <p className="text-xs uppercase tracking-[0.12em] text-gray-500">Spending by Category</p>
             <div className="mt-3 h-56 min-w-0">
               <ResponsiveContainer width="100%" height="100%" minWidth={220}>
@@ -222,7 +222,7 @@ export const CleanChartsPanel = ({
                   <Bar
                     dataKey="value"
                     radius={[6, 6, 0, 0]}
-                    fill="#60a5fa"
+                    fill="#5b7cfa"
                     fillOpacity={0.84}
                     maxBarSize={30}
                     isAnimationActive

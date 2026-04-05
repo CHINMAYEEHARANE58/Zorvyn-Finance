@@ -67,7 +67,7 @@ export const GoalTracker = ({ userId, currentSavings, currency = 'USD' }) => {
             min="1"
             value={draftGoalDisplay}
             onChange={(event) => setDraftGoalDisplay(event.target.value)}
-            className="w-40 rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+            className="w-40 rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
             placeholder="Set goal"
           />
           <Button size="sm" variant="primary" onClick={saveGoal}>

@@ -60,7 +60,7 @@ export const InsightsCarousel = ({ slides = [] }) => {
               type="button"
               onClick={() => setActiveIndex(index)}
               className={`h-1.5 rounded-full transition-all duration-200 ${
-                safeIndex === index ? 'w-5 bg-sky-400' : 'w-2 bg-white/20'
+                safeIndex === index ? 'w-5 bg-blue-400' : 'w-2 bg-white/20'
               }`}
               aria-label={`Show slide ${index + 1}`}
             />

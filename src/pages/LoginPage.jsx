@@ -68,7 +68,7 @@ export const LoginPage = () => {
 
   return (
     <PageTransition>
-      <main className="flex min-h-[calc(100vh-72px)] items-center justify-center px-4 py-10">
+      <main className="zorvyn-hero flex min-h-[calc(100vh-72px)] items-center justify-center px-4 py-10">
         <AuthCard
           title="Welcome back"
           subtitle="Login to continue to your finance workspace"
@@ -80,7 +80,7 @@ export const LoginPage = () => {
                 type="email"
                 value={formValues.email}
                 onChange={(event) => handleChange('email', event.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-sky-400/70 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.15)]"
+                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-blue-400/70 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]"
                 placeholder="you@example.com"
                 required
               />
@@ -92,7 +92,7 @@ export const LoginPage = () => {
                 type="password"
                 value={formValues.password}
                 onChange={(event) => handleChange('password', event.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-sky-400/70 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.15)]"
+                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-blue-400/70 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]"
                 placeholder="Enter password"
                 required
               />
@@ -131,7 +131,7 @@ export const LoginPage = () => {
 
           <p className="mt-5 text-sm text-gray-400">
             New here?{' '}
-            <Link to="/signup" className="text-sky-300 hover:text-sky-200">
+            <Link to="/signup" className="text-blue-300 hover:text-blue-200">
               Create an account
             </Link>
           </p>

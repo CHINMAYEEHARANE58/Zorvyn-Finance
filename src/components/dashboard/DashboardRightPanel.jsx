@@ -137,7 +137,7 @@ const QuickActionTile = ({ label, onClick, icon }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:scale-95"
+    className="flex flex-col items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/[0.08] hover:text-white active:scale-95"
   >
     <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-slate-800 text-gray-200">
       <ActionIcon variant={icon} />
@@ -154,7 +154,7 @@ const CarouselDots = ({ count, activeIndex, onSelect }) => (
         type="button"
         onClick={() => onSelect(index)}
         className={`h-2 rounded-full transition-all duration-200 ease-in-out ${
-          activeIndex === index ? 'w-5 bg-sky-400' : 'w-2 bg-white/20 hover:bg-white/35'
+          activeIndex === index ? 'w-5 bg-blue-400' : 'w-2 bg-white/20 hover:bg-white/35'
         }`}
         aria-label={`Go to slide ${index + 1}`}
       />
@@ -212,7 +212,7 @@ export const DashboardRightPanel = ({
       {
         id: 'weekly',
         content: (
-          <div className="rounded-xl border border-white/10 bg-slate-900/45 p-4">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">Weekly Summary</p>
             <ul className="mt-3 space-y-2">
               {(insights?.weeklySummary || ['Weekly data is not available yet.'])
@@ -229,7 +229,7 @@ export const DashboardRightPanel = ({
       {
         id: 'goal',
         content: (
-          <div className="rounded-xl border border-white/10 bg-slate-900/45 p-4">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
             <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500">Savings Goal</p>
             <p className="mt-3 text-sm text-gray-300">
               {formatCurrency(summary.totalBalance, currency)} / {formatCurrency(goalUsd, currency)}
@@ -308,7 +308,7 @@ export const DashboardRightPanel = ({
       <Card className="p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Mini Flow Chart</p>
-          <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-slate-900/70 p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 p-1">
             {RANGE_OPTIONS.map((option) => (
               <button
                 key={option.id}
@@ -316,7 +316,7 @@ export const DashboardRightPanel = ({
                 onClick={() => setRange(option.id)}
                 className={`rounded-md px-2 py-1 text-[11px] transition-all duration-200 ease-in-out ${
                   range === option.id
-                    ? 'bg-white text-slate-900'
+                    ? 'bg-blue-500 text-white'
                     : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
                 }`}
               >
@@ -331,8 +331,8 @@ export const DashboardRightPanel = ({
             <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
               <defs>
                 <linearGradient id="miniFlow" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.32} />
-                  <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#5b7cfa" stopOpacity={0.32} />
+                  <stop offset="95%" stopColor="#5b7cfa" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
@@ -348,7 +348,7 @@ export const DashboardRightPanel = ({
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#60a5fa"
+                stroke="#5b7cfa"
                 strokeWidth={2}
                 fill="url(#miniFlow)"
                 isAnimationActive

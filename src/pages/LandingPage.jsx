@@ -3,27 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { PageTransition } from '../components/ui/PageTransition'
-import { SectionReveal } from '../components/ui/SectionReveal'
 import { useAuth } from '../context/useAuth'
 
 const MotionDiv = motion.div
 
 const features = [
   {
-    title: 'Smart Insights',
-    description: 'Clear weekly and monthly summaries based on real transaction behavior.',
+    title: 'Secure Infrastructure',
+    description: 'Bank-grade architecture with clean audit-ready financial records.',
   },
   {
-    title: 'Expense Tracking',
-    description: 'Track income and expenses with focused filters and clean category views.',
+    title: 'Compliant Workflows',
+    description: 'Structured tracking and role-based visibility for finance operations.',
   },
   {
-    title: 'Visual Analytics',
-    description: 'Understand your trends quickly with minimal and readable charts.',
-  },
-  {
-    title: 'Budget Planning',
-    description: 'Set category budgets, monitor progress, and avoid overspending.',
+    title: 'Intelligent Insights',
+    description: 'Actionable analytics for budgets, trends, and healthy savings behavior.',
   },
 ]
 
@@ -33,99 +28,106 @@ export const LandingPage = () => {
 
   return (
     <PageTransition>
-      <main className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6 md:py-14">
-        <section className="grid items-center gap-8 md:gap-10 lg:grid-cols-2">
-          <MotionDiv
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <p className="text-xs uppercase tracking-[0.16em] text-gray-400">Zorvyn Finance</p>
-            <h1 className="mt-3 text-4xl font-semibold leading-tight text-white md:text-5xl lg:text-[54px]">
-              Take control of your finances
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-gray-400">
-              Track spending, understand trends, and make better financial decisions in a focused dashboard.
-            </p>
+      <main className="min-h-screen">
+        <section className="zorvyn-hero border-b border-white/10">
+          <div className="mx-auto max-w-7xl px-4 pb-14 pt-16 text-center md:px-6 md:pt-20">
+            <MotionDiv
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.34 }}
+              className="mx-auto max-w-4xl"
+            >
+              <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                Trusted by finance-first teams
+              </p>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              {isAuthenticated ? (
-                <Button variant="primary" onClick={() => navigate('/dashboard')}>
-                  Go to Dashboard
-                </Button>
-              ) : (
-                <>
-                  <Button variant="secondary" onClick={() => navigate('/login')}>
-                    Login
-                  </Button>
-                  <Button variant="primary" onClick={() => navigate('/signup')}>
-                    Get Started
-                  </Button>
-                </>
-              )}
-            </div>
-          </MotionDiv>
+              <h1 className="mt-7 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-7xl">
+                Building <span className="text-gradient-fintech">Secure</span>,{' '}
+                <span className="text-gradient-fintech">Compliant</span>, and{' '}
+                <span className="text-gradient-fintech">Intelligent</span>{' '}
+                Financial Systems
+              </h1>
 
-          <MotionDiv
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, delay: 0.06 }}
-            whileHover={{ y: -4, rotateX: 2, rotateY: -2 }}
-            style={{ transformPerspective: 1000 }}
-          >
-            <Card className="p-4 md:p-5">
-              <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Dashboard Preview</p>
+              <p className="mx-auto mt-6 max-w-3xl text-base text-gray-400 sm:text-lg">
+                Enterprise-grade financial infrastructure that scales with you. From startups to
+                enterprises, manage money with clarity and confidence.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                {isAuthenticated ? (
+                  <Button variant="primary" onClick={() => navigate('/dashboard')}>
+                    Open Dashboard
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="secondary" onClick={() => navigate('/login')}>
+                      Login
+                    </Button>
+                    <Button variant="primary" onClick={() => navigate('/signup')}>
+                      Contact Sales
+                    </Button>
+                  </>
+                )}
+              </div>
+            </MotionDiv>
+
+            <MotionDiv
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.34, delay: 0.08 }}
+              className="mx-auto mt-12 max-w-6xl"
+            >
               <img
                 src="/images/landing-dashboard.svg"
-                alt="Finance dashboard mockup"
-                className="mt-3 w-full rounded-xl border border-white/10 object-cover shadow-sm"
+                alt="Finance dashboard preview"
+                className="w-full rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
               />
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-gray-500">Balance</p>
-                  <p className="mt-1 text-sm font-semibold text-white">$18.7K</p>
-                </div>
-                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-gray-500">Income</p>
-                  <p className="mt-1 text-sm font-semibold text-emerald-300">$21.2K</p>
-                </div>
-                <div className="rounded-lg border border-white/10 bg-slate-900/55 p-2.5">
-                  <p className="text-[11px] text-gray-500">Expenses</p>
-                  <p className="mt-1 text-sm font-semibold text-red-300">$2.5K</p>
-                </div>
-              </div>
-            </Card>
-          </MotionDiv>
+            </MotionDiv>
+          </div>
         </section>
 
-        <SectionReveal className="mt-12 md:mt-14">
-          <div className="mb-5">
-            <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Core Features</p>
-            <h2 className="mt-2 text-2xl font-semibold text-white md:text-3xl">
-              Built for clarity and daily usability
-            </h2>
+        <section id="features" className="mx-auto max-w-7xl px-4 py-14 md:px-6">
+          <div className="mb-6">
+            <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Features</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Designed for modern finance teams</h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             {features.map((feature, index) => (
               <MotionDiv
                 key={feature.title}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.24, delay: index * 0.04 }}
+                transition={{ duration: 0.24, delay: index * 0.05 }}
               >
-                <Card className="h-full p-5">
-                  <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-xs font-semibold text-gray-300">
-                    0{index + 1}
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold text-white">{feature.title}</h3>
+                <Card className="h-full p-6">
+                  <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-gray-400">{feature.description}</p>
                 </Card>
               </MotionDiv>
             ))}
           </div>
-        </SectionReveal>
+        </section>
+
+        <section id="pricing" className="mx-auto max-w-7xl px-4 pb-10 md:px-6">
+          <Card className="p-6">
+            <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Pricing</p>
+            <p className="mt-2 text-sm text-gray-300">
+              Flexible plans for startups, growing teams, and enterprise operations.
+            </p>
+          </Card>
+        </section>
+
+        <section id="company" className="mx-auto max-w-7xl px-4 pb-16 md:px-6">
+          <Card className="p-6">
+            <p className="text-xs uppercase tracking-[0.16em] text-gray-500">Company</p>
+            <p className="mt-2 text-sm text-gray-300">
+              Zorvyn helps organizations build secure and intelligent financial systems.
+            </p>
+          </Card>
+        </section>
       </main>
     </PageTransition>
   )

@@ -45,7 +45,7 @@ export const ProfilePage = () => {
 
   return (
     <PageTransition>
-      <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 md:px-6 md:py-8">
+      <main className="zorvyn-hero mx-auto w-full max-w-7xl space-y-6 px-4 py-6 md:px-6 md:py-8">
         <Card>
           <SectionHeader title="Profile" subtitle="Manage account details and preferences" />
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -57,7 +57,7 @@ export const ProfilePage = () => {
                   className="h-14 w-14 rounded-full border border-white/10 object-cover"
                 />
               ) : (
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-sky-500/20 text-xl font-semibold text-sky-200">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/20 text-xl font-semibold text-blue-200">
                   {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
               )}
@@ -82,7 +82,7 @@ export const ProfilePage = () => {
                     type="text"
                     value={nameInput}
                     onChange={(event) => setNameInput(event.target.value)}
-                    className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+                    className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
                   />
                 </label>
                 <div className="mt-4 flex justify-end">
@@ -113,7 +113,7 @@ export const ProfilePage = () => {
                     <select
                       value={currency}
                       onChange={(event) => setCurrency(event.target.value)}
-                      className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+                      className="w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
                     >
                       {SUPPORTED_CURRENCIES.map((currencyCode) => (
                         <option key={currencyCode} value={currencyCode}>
@@ -154,7 +154,7 @@ export const ProfilePage = () => {
             </div>
             <div className="rounded-xl border border-white/10 bg-slate-900/60 p-4">
               <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Savings</p>
-              <p className="mt-2 text-2xl font-semibold text-sky-300">
+              <p className="mt-2 text-2xl font-semibold text-blue-300">
                 {formatCurrency(stats.totalBalance, activeCurrency)}
               </p>
             </div>

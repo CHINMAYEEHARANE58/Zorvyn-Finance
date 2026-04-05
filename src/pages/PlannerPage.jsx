@@ -14,7 +14,7 @@ export const PlannerPage = () => {
 
   return (
     <PageTransition>
-      <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 md:px-6 md:py-8">
+      <main className="zorvyn-hero mx-auto w-full max-w-7xl space-y-6 px-4 py-6 md:px-6 md:py-8">
         <Card>
           <SectionHeader
             title="Planner"

@@ -95,7 +95,7 @@ export const SpendingBreakdownToggleChart = ({
             onClick={() => setMode(option.id)}
             className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-all duration-200 ${
               mode === option.id
-                ? 'bg-white text-slate-900'
+                ? 'bg-blue-500 text-white'
                 : 'text-gray-300 hover:bg-white/10'
             }`}
           >
@@ -136,7 +136,7 @@ export const SpendingBreakdownToggleChart = ({
                 <Bar
                   dataKey="value"
                   radius={[6, 6, 0, 0]}
-                  fill="#60a5fa"
+                  fill="#5b7cfa"
                   fillOpacity={0.85}
                   maxBarSize={34}
                   isAnimationActive
@@ -150,4 +150,3 @@ export const SpendingBreakdownToggleChart = ({
     </div>
   )
 }
-

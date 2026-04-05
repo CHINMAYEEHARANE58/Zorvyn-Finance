@@ -37,7 +37,7 @@ export const BudgetProgressCard = ({ used = 0, budget = 0, currency = 'USD' }) =
             <path
               d="M 16 70 A 54 54 0 0 1 124 70"
               fill="none"
-              stroke={percentUsed <= 90 ? '#34d399' : '#f87171'}
+              stroke={percentUsed <= 90 ? '#62f0c1' : '#f87171'}
               strokeWidth="12"
               strokeLinecap="round"
               strokeDasharray={`${progressLength} ${ARC_LENGTH}`}

@@ -22,7 +22,7 @@ function App() {
   }, [darkMode])
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-900 dark:text-white">
+    <div className="min-h-screen transition-colors duration-300">
       {isDashboardRoute ? null : <AppNavbar />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

@@ -229,7 +229,7 @@ export const WhatIfSimulator = ({
               <select
                 value={effectiveCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+                className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-blue-400/60"
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>{category}</option>
@@ -248,7 +248,7 @@ export const WhatIfSimulator = ({
                 max="50"
                 value={reductionPercent}
                 onChange={(event) => setReductionPercent(Number(event.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-sky-400"
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/10 accent-blue-500"
               />
             </label>
           </div>
@@ -308,7 +308,7 @@ export const WhatIfSimulator = ({
 
               <div key={`${simulationKey}-gain`} className="animate-value-flash rounded-lg border border-white/10 bg-slate-950/60 p-3 transition-all duration-200">
                 <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Savings Increase</p>
-                <p className="mt-2 text-sm font-semibold text-sky-300">
+                <p className="mt-2 text-sm font-semibold text-blue-300">
                   +{formatCurrency(animatedGain, currency)} / {timeLabel}
                 </p>
                 <p className="mt-1 text-xs text-gray-500">

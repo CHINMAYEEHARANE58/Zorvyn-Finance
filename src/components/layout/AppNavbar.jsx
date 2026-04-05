@@ -6,6 +6,7 @@ import { useFinance } from '../../context/useFinance'
 import { Button } from '../ui/Button'
 
 const MotionDropdown = motion.div
+
 const ThemeIcon = ({ darkMode }) => (
   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
     {darkMode ? (
@@ -19,8 +20,14 @@ const ThemeIcon = ({ darkMode }) => (
   </svg>
 )
 
-const navClassName = ({ isActive }) =>
-  `text-sm transition-all duration-200 ease-in-out ${
+const BrandMark = () => (
+  <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-xs font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    Z
+  </span>
+)
+
+const navLinkClassName = ({ isActive }) =>
+  `relative px-1 py-1 text-sm tracking-[0.01em] transition-colors duration-200 ${
     isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'
   }`
 
@@ -56,30 +63,48 @@ export const AppNavbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-900/90 backdrop-blur">
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 md:px-6">
-        <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/20 text-sm font-semibold text-sky-300">
-            Z
-          </span>
-          <span className="text-sm font-semibold tracking-wide text-white">Zorvyn Finance</span>
+    <header className="nav-surface sticky top-0 z-40">
+      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3.5 md:px-6">
+        <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center gap-2.5">
+          <BrandMark />
+          <span className="text-sm font-semibold tracking-wide text-white">zorvyn</span>
         </Link>
 
-        <div className="flex items-center gap-2 md:gap-3">
-          <NavLink to="/" end className={navClassName}>
-            Home
+        <div className="hidden items-center gap-7 lg:flex">
+          <NavLink to="/" end className={navLinkClassName}>
+            {({ isActive }) => (
+              <>
+                Home
+                <span
+                  className={`absolute -bottom-2 left-0 h-0.5 w-full bg-blue-400 transition-opacity duration-200 ${
+                    isActive ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              </>
+            )}
           </NavLink>
+          <a href="/#features" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
+            Features
+          </a>
+          <a href="/#pricing" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
+            Pricing
+          </a>
+          <a href="/#company" className="px-1 py-1 text-sm text-gray-400 transition-colors duration-200 hover:text-gray-200">
+            Company
+          </a>
+        </div>
 
+        <div className="flex items-center gap-2 md:gap-3">
           {isAuthenticated ? (
             <>
-              <NavLink to="/dashboard" className={navClassName}>
+              <NavLink to="/dashboard" className={navLinkClassName}>
                 Dashboard
               </NavLink>
 
               <button
                 type="button"
                 onClick={() => setDarkMode((previous) => !previous)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-gray-200 transition-all duration-200 ease-in-out hover:translate-y-0.5 hover:bg-white/10"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-gray-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
                 aria-label="Toggle theme"
               >
                 <ThemeIcon darkMode={darkMode} />
@@ -89,7 +114,7 @@ export const AppNavbar = () => {
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen((previous) => !previous)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm font-semibold text-sky-200 transition-all duration-200 ease-in-out hover:translate-y-0.5 hover:bg-white/10"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm font-semibold text-blue-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:bg-white/10"
                   aria-label="Open user menu"
                 >
                   {user?.avatarUrl ? (
@@ -110,7 +135,7 @@ export const AppNavbar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
-                      className="absolute right-0 z-50 mt-2 w-44 rounded-xl border border-white/10 bg-slate-900/95 p-1.5 shadow-lg"
+                      className="panel-surface absolute right-0 z-50 mt-2 w-44 p-1.5"
                     >
                       <button
                         type="button"
@@ -140,11 +165,11 @@ export const AppNavbar = () => {
             </>
           ) : (
             <>
-              <NavLink to="/login" className={navClassName}>
+              <Button size="sm" variant="secondary" onClick={() => navigate('/login')}>
                 Login
-              </NavLink>
+              </Button>
               <Button size="sm" variant="primary" onClick={() => navigate('/signup')}>
-                Get Started
+                Contact Sales
               </Button>
             </>
           )}

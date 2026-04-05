@@ -9,7 +9,7 @@ export const DashboardAppPage = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-slate-950">
+      <div className="zorvyn-hero min-h-screen">
         <FinanceSidebar
           activeItem={activeItem}
           onSelect={setActiveItem}
@@ -17,11 +17,13 @@ export const DashboardAppPage = () => {
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
-        <main className="px-4 py-4 md:px-6 md:py-6 lg:ml-64">
-          <DashboardPage
-            activeSidebarItem={activeItem}
-            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-          />
+        <main className="lg:ml-64">
+          <div className="container-custom py-4 md:py-6">
+            <DashboardPage
+              activeSidebarItem={activeItem}
+              onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+            />
+          </div>
         </main>
       </div>
     </PageTransition>
