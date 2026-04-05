@@ -1,26 +1,20 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { SummaryCard } from '../components/cards/SummaryCard'
-import { BalanceTrendChart } from '../components/charts/BalanceTrendChart'
-import { SpendingBreakdownToggleChart } from '../components/charts/SpendingBreakdownToggleChart'
+import { CleanChartsPanel } from '../components/charts/CleanChartsPanel'
 import { EmptyState } from '../components/common/EmptyState'
-import { CategoryBudgetLimits } from '../components/dashboard/CategoryBudgetLimits'
+import { ActivityTimeline } from '../components/dashboard/ActivityTimeline'
+import { BudgetProgressCard } from '../components/dashboard/BudgetProgressCard'
+import { DashboardRightPanel } from '../components/dashboard/DashboardRightPanel'
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton'
-import { FinancialHealthScoreCard } from '../components/dashboard/FinancialHealthScoreCard'
-import { GoalTracker } from '../components/dashboard/GoalTracker'
-import { MiniCalendarView } from '../components/dashboard/MiniCalendarView'
-import { InsightsCarousel } from '../components/insights/InsightsCarousel'
-import { InsightsPanel } from '../components/insights/InsightsPanel'
-import { DashboardHeader } from '../components/layout/DashboardHeader'
-import { TransactionFilters } from '../components/transactions/TransactionFilters'
+import { DashboardTopBar } from '../components/layout/DashboardTopBar'
 import { TransactionForm } from '../components/transactions/TransactionForm'
-import { TransactionTable } from '../components/transactions/TransactionTable'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { SectionHeader } from '../components/ui/SectionHeader'
 import { SectionReveal } from '../components/ui/SectionReveal'
 import { Tooltip } from '../components/ui/Tooltip'
 import { useAuth } from '../context/useAuth'
 import { useFinance } from '../context/useFinance'
+import { useNavigate } from 'react-router-dom'
 
 const triggerDownload = (name, content, mimeType) => {
   const url = URL.createObjectURL(new Blob([content], { type: mimeType }))
@@ -39,19 +33,19 @@ const getPercentDeltaText = (current, previous) => {
   return `${rounded}%`
 }
 
-const getTrendIndicator = (direction) => {
-  if (direction === 'up') return '↑'
-  if (direction === 'down') return '↓'
-  return '→'
-}
-
-export const DashboardPage = () => {
+export const DashboardPage = ({ activeSidebarItem, onOpenMobileSidebar }) => {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const {
     isLoading,
     role,
+    setRole,
+    darkMode,
+    setDarkMode,
     focusMode,
+    setFocusMode,
     timeRange,
+    setTimeRange,
     transactions,
     scopedTransactions,
     filteredTransactions,
@@ -62,59 +56,48 @@ export const DashboardPage = () => {
     clearFilters,
     setEditingTransaction,
     removeTransaction,
-    importTransactions,
     editingTransaction,
     summary,
-    trendData,
     insights,
-    resetData,
   } = useFinance()
 
   const [showForm, setShowForm] = useState(false)
   const [presetType, setPresetType] = useState('expense')
-  const [importStatus, setImportStatus] = useState('')
-  const importInputRef = useRef(null)
+
+  const dashboardRef = useRef(null)
+  const budgetingRef = useRef(null)
   const transactionsRef = useRef(null)
+  const walletsRef = useRef(null)
+  const savingsRef = useRef(null)
+  const reportsRef = useRef(null)
 
-  const hasNoTransactions = !isLoading && scopedTransactions.length === 0
-  const hasNoResults =
-    !isLoading && scopedTransactions.length > 0 && filteredTransactions.length === 0
-  const isSearching = filters.searchTerm.trim() !== debouncedSearchTerm.trim()
-
-  const firstName = user?.name?.split(' ')[0] || ''
   const currency = user?.preferences?.currency || 'USD'
+  const isSearching = filters.searchTerm.trim() !== debouncedSearchTerm.trim()
+  const hasNoTransactions = scopedTransactions.length === 0
+  const readOnly = role === 'viewer'
 
   const conciseInsights = useMemo(() => {
-    return [
-      insights.highestCategory
-        ? `${getTrendIndicator(insights.expenseTrendDirection)} Highest spending category: ${insights.highestCategory.category} (${insights.highestCategory.percent}% of expenses).`
-        : 'No spending category pattern is available yet.',
-      `${getTrendIndicator(insights.expenseTrendDirection)} Expenses are ${Math.round(insights.spendingRatio * 100)}% of income this period.`,
-      `${getTrendIndicator(insights.balanceTrendDirection)} Savings trend: ${insights.savingsTrend === 'up' ? 'Improving' : insights.savingsTrend === 'down' ? 'Declining' : 'Stable'}.`,
-    ].slice(0, 3)
-  }, [insights])
+    return insights.conversationalInsights?.slice(0, 3) || []
+  }, [insights.conversationalInsights])
 
-  const carouselSlides = useMemo(
-    () => [
-      {
-        title: 'Weekly Summary',
-        text: insights.weeklySummary?.[0] || 'Weekly data will appear as transactions are added.',
-      },
-      {
-        title: 'Category Movement',
-        text: insights.weeklySummary?.[1] || 'Category movement insights are not available yet.',
-      },
-      {
-        title: 'Smart Tip',
-        text:
-          insights.nudges?.[0]?.message ||
-          'Keep your top expense category under control to improve monthly savings.',
-      },
-    ],
-    [insights.nudges, insights.weeklySummary],
-  )
+  useEffect(() => {
+    const sectionMap = {
+      dashboard: dashboardRef,
+      budgeting: budgetingRef,
+      transactions: transactionsRef,
+      wallets: walletsRef,
+      savings: savingsRef,
+      reports: reportsRef,
+    }
+
+    sectionMap[activeSidebarItem]?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }, [activeSidebarItem])
 
   const openAddForm = (nextType = 'expense') => {
+    if (readOnly) return
     setPresetType(nextType)
     setEditingTransaction(null)
     setShowForm(true)
@@ -152,78 +135,36 @@ export const DashboardPage = () => {
     triggerDownload('transactions.json', jsonContent, 'application/json;charset=utf-8')
   }
 
-  const onImportClick = () => {
-    importInputRef.current?.click()
-  }
-
-  const onImportFileChange = async (event) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    try {
-      const fileText = await file.text()
-      const parsed = JSON.parse(fileText)
-      const result = importTransactions(parsed)
-
-      if (!result.ok) {
-        setImportStatus(result.error)
-      } else {
-        setImportStatus(`Imported ${result.importedCount} transactions successfully.`)
-      }
-    } catch {
-      setImportStatus('Import failed. Please upload a valid JSON file.')
-    } finally {
-      event.target.value = ''
-    }
-  }
-
-  const heroInsight =
-    insights.savingsTrend === 'up' && insights.savingsImprovementPercent > 0
-      ? `You saved ${insights.savingsImprovementPercent}% more this month.`
-      : insights.savingsTrend === 'down'
-        ? 'Savings softened compared to last month.'
-        : 'Your savings stayed stable this month.'
-
   if (isLoading) {
     return <DashboardSkeleton />
   }
 
   return (
-    <div className="space-y-6 md:space-y-8">
-      <SectionReveal>
-        <DashboardHeader
-          userName={firstName}
-          heroInsight={heroInsight}
-          primaryActionLabel={role === 'admin' ? 'Add Transaction' : 'View Transactions'}
-          onPrimaryAction={
-            role === 'admin'
-              ? () => openAddForm('expense')
-              : () =>
-                  transactionsRef.current?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                  })
-          }
-        />
-      </SectionReveal>
-
-      {focusMode ? (
-        <SectionReveal className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <SummaryCard
-            title="Total Balance"
-            amount={summary.totalBalance}
-            currency={currency}
-            trendText={getPercentDeltaText(
-              insights.latestMonth?.savings || 0,
-              insights.previousMonth?.savings || 0,
-            )}
+    <div className="space-y-4 md:space-y-5">
+      <div ref={dashboardRef}>
+        <SectionReveal delay={0.02}>
+          <DashboardTopBar
+            searchTerm={filters.searchTerm}
+            onSearchChange={(value) => updateFilter('searchTerm', value)}
+            role={role}
+            onRoleChange={setRole}
+            focusMode={focusMode}
+            onToggleFocusMode={() => setFocusMode((previous) => !previous)}
+            timeRange={timeRange}
+            onTimeRangeChange={setTimeRange}
+            darkMode={darkMode}
+            onToggleTheme={() => setDarkMode((previous) => !previous)}
+            user={user}
+            onOpenMobileSidebar={onOpenMobileSidebar}
+            onOpenProfile={() => navigate('/profile')}
           />
-          <FinancialHealthScoreCard score={insights.healthScore} label={insights.healthLabel} />
         </SectionReveal>
-      ) : (
-        <SectionReveal className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      </div>
+
+      <SectionReveal delay={0.04}>
+        <div ref={savingsRef} id="savings" className="grid grid-cols-1 gap-4 xl:grid-cols-3">
           <SummaryCard
-            title="Total Balance"
+            title="Balance"
             amount={summary.totalBalance}
             currency={currency}
             trendText={getPercentDeltaText(
@@ -242,149 +183,89 @@ export const DashboardPage = () => {
             )}
           />
           <SummaryCard
-            title="Expenses"
-            amount={summary.totalExpenses}
+            title="Savings"
+            amount={summary.totalBalance}
             currency={currency}
-            tone="negative"
-            trendText={getPercentDeltaText(
-              insights.latestMonth?.expenses || 0,
-              insights.previousMonth?.expenses || 0,
-            )}
+            tone={summary.totalBalance >= 0 ? 'positive' : 'negative'}
+            trendText={`${insights.healthScore}%`}
           />
-          <FinancialHealthScoreCard score={insights.healthScore} label={insights.healthLabel} />
-        </SectionReveal>
-      )}
-
-      <SectionReveal>
-        <Card>
-          <SectionHeader title="Insights" subtitle="Quick weekly summary and recommendations" />
-          <InsightsPanel
-            insights={insights}
-            currency={currency}
-            conciseInsights={conciseInsights}
-          />
-        </Card>
+        </div>
       </SectionReveal>
 
-      {!focusMode ? (
-        <SectionReveal className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <GoalTracker
-            key={`${user?.id || 'goal'}-${currency}`}
-            userId={user?.id || 'guest'}
-            currentSavings={summary.totalBalance}
-            currency={currency}
-          />
-          <InsightsCarousel slides={carouselSlides} />
-        </SectionReveal>
-      ) : null}
+      <div className={`grid gap-4 ${focusMode ? 'grid-cols-1' : 'grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_320px]'}`}>
+        <div className="space-y-4">
+          <SectionReveal delay={0.06}>
+            <Card className="p-5">
+              <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Smart Insights</p>
+              <div className="mt-3 space-y-2">
+                {conciseInsights.length ? (
+                  conciseInsights.map((line) => (
+                    <p key={line} className="text-sm text-gray-300 transition-colors duration-200 hover:text-gray-100">
+                      {line}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400">Insights will appear as data grows.</p>
+                )}
+              </div>
+              {readOnly ? (
+                <p className="mt-3 text-xs font-medium text-amber-300">Read-only mode</p>
+              ) : null}
+            </Card>
+          </SectionReveal>
 
-      {!focusMode ? (
-        <>
-          <SectionReveal className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            <Card>
-              <SectionHeader title="Balance Trend" subtitle={`Performance for this ${timeRange}`} />
-              {trendData.length ? (
-                <BalanceTrendChart key={timeRange} data={trendData} currency={currency} />
-              ) : (
-                <EmptyState
-                  title="No chart data"
-                  description="Add transactions to visualize your trend."
-                  action={role === 'admin' ? () => openAddForm('expense') : null}
-                  actionLabel="Add transaction"
+          {!focusMode ? (
+            <SectionReveal delay={0.08}>
+              <div ref={budgetingRef}>
+                <BudgetProgressCard
+                  used={summary.totalExpenses}
+                  budget={Math.max(summary.totalIncome, summary.totalExpenses)}
+                  currency={currency}
                 />
-              )}
-            </Card>
+              </div>
+            </SectionReveal>
+          ) : null}
 
-            <Card>
-              <SectionHeader
-                title="Spending Breakdown"
-                subtitle="Toggle by category, time, or transaction type"
-              />
-              <SpendingBreakdownToggleChart
-                transactions={scopedTransactions}
+          {!focusMode ? (
+            <SectionReveal delay={0.1}>
+              <CleanChartsPanel
+                transactions={transactions}
                 currency={currency}
+                defaultRange={timeRange}
               />
-            </Card>
-          </SectionReveal>
+            </SectionReveal>
+          ) : null}
 
-          <SectionReveal className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            <CategoryBudgetLimits
-              userId={user?.id || 'guest'}
-              transactions={scopedTransactions}
-              categories={categories.filter((category) => !['Salary', 'Freelance'].includes(category))}
-              currency={currency}
-            />
-            <MiniCalendarView transactions={transactions} currency={currency} />
-          </SectionReveal>
-        </>
-      ) : (
-        <SectionReveal>
-          <Card>
-            <SectionHeader
-              title="Focus Mode"
-              subtitle="Charts and transactions are hidden to minimize distractions."
-            />
-            <p className="text-sm text-gray-400">
-              Focus mode is active. Disable it from the header to view the full workspace.
-            </p>
-          </Card>
-        </SectionReveal>
-      )}
-
-      {!focusMode ? (
-        <SectionReveal>
-          <Card>
-            <div ref={transactionsRef}>
-              <SectionHeader
-                title="Transactions"
-                subtitle={`${filteredTransactions.length} of ${scopedTransactions.length} shown`}
-                actions={
-                  role === 'admin' ? (
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="secondary" onClick={onImportClick}>
-                        Import JSON
-                      </Button>
-                      <Button variant="primary" onClick={() => openAddForm('expense')}>
-                        Add Transaction
-                      </Button>
-                    </div>
-                  ) : (
+          <SectionReveal delay={0.12}>
+            <div ref={transactionsRef} className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs text-gray-500">
+                  {isSearching
+                    ? 'Searching...'
+                    : `${filteredTransactions.length} of ${scopedTransactions.length} in this ${timeRange}`}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={exportCsv}>
+                    Export CSV
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={exportJson}>
+                    Export JSON
+                  </Button>
+                  {readOnly ? (
                     <Tooltip content="Switch to admin to edit">
                       <span>
-                        <Button variant="secondary" disabled>
-                          Add Transaction
+                        <Button size="sm" variant="secondary" disabled>
+                          Add
                         </Button>
                       </span>
                     </Tooltip>
-                  )
-                }
-              />
-            </div>
-
-            <input
-              ref={importInputRef}
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={onImportFileChange}
-            />
-
-            <div className="space-y-5">
-              <TransactionFilters
-                filters={filters}
-                categories={categories}
-                onChange={updateFilter}
-                onClear={clearFilters}
-                onExportCsv={exportCsv}
-                onExportJson={exportJson}
-                isSearching={isSearching}
-              />
-
-              {importStatus ? (
-                <p className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-300">
-                  {importStatus}
-                </p>
-              ) : null}
+                  ) : (
+                    <Button size="sm" variant="primary" onClick={() => openAddForm('expense')}>
+                      Add
+                    </Button>
+                  )}
+                </div>
+              </div>
 
               <div
                 className={`grid overflow-hidden transition-all duration-200 ease-in-out ${
@@ -392,53 +273,63 @@ export const DashboardPage = () => {
                 }`}
               >
                 <div className="overflow-hidden">
-                  {role === 'admin' ? (
+                  {readOnly ? null : (
                     <TransactionForm
                       key={editingTransaction?.id ?? `${presetType}-new`}
                       presetType={presetType}
                       onClose={closeForm}
                     />
-                  ) : null}
+                  )}
                 </div>
               </div>
 
               {hasNoTransactions ? (
                 <EmptyState
                   title="No transactions yet"
-                  description="Start by adding your first income or expense entry."
-                  action={role === 'admin' ? () => openAddForm('expense') : null}
+                  description="Start by adding your first entry."
+                  action={readOnly ? null : () => openAddForm('expense')}
                   actionLabel="Add transaction"
                 />
-              ) : null}
-
-              {hasNoResults ? (
-                <EmptyState
-                  title="No transactions found"
-                  description="Try adjusting filters or search to reveal matching entries."
-                  action={clearFilters}
-                  actionLabel="Clear filters"
+              ) : (
+                <ActivityTimeline
+                  transactions={filteredTransactions}
+                  role={role}
+                  currency={currency}
+                  categories={categories}
+                  filters={filters}
+                  isSearching={isSearching}
+                  onFilterChange={updateFilter}
+                  onClearFilters={clearFilters}
+                  onAdd={() => openAddForm('expense')}
+                  onEdit={openEditForm}
+                  onDelete={removeTransaction}
                 />
-              ) : null}
-
-              <TransactionTable
-                transactions={filteredTransactions}
-                role={role}
-                onEdit={openEditForm}
-                onDelete={removeTransaction}
-                currency={currency}
-              />
-
-              {role === 'admin' ? (
-                <div className="flex justify-end">
-                  <Button variant="secondary" onClick={resetData}>
-                    Restore Mock Data
-                  </Button>
-                </div>
-              ) : null}
+              )}
             </div>
-          </Card>
-        </SectionReveal>
-      ) : null}
+          </SectionReveal>
+        </div>
+
+        {!focusMode ? (
+          <SectionReveal delay={0.14}>
+            <div ref={walletsRef} className="space-y-4">
+              <div ref={reportsRef}>
+                <DashboardRightPanel
+                  userId={user?.id || 'guest'}
+                  transactions={transactions}
+                  summary={summary}
+                  insights={insights}
+                  currency={currency}
+                  onTransfer={() => openAddForm('expense')}
+                  onTopUp={() => openAddForm('income')}
+                  onSave={() =>
+                    savingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
+                />
+              </div>
+            </div>
+          </SectionReveal>
+        ) : null}
+      </div>
     </div>
   )
 }

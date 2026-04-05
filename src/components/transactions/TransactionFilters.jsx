@@ -17,13 +17,13 @@ export const TransactionFilters = ({
           placeholder="Search category, description or amount"
           value={filters.searchTerm}
           onChange={(event) => onChange('searchTerm', event.target.value)}
-          className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-sky-400/60"
+          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out placeholder:text-gray-500 focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         />
 
         <select
           value={filters.selectedType}
           onChange={(event) => onChange('selectedType', event.target.value)}
-          className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         >
           <option value="all">All Types</option>
           <option value="income">Income</option>
@@ -33,7 +33,7 @@ export const TransactionFilters = ({
         <select
           value={filters.selectedCategory}
           onChange={(event) => onChange('selectedCategory', event.target.value)}
-          className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         >
           <option value="all">All Categories</option>
           {categories.map((category) => (
@@ -46,7 +46,7 @@ export const TransactionFilters = ({
         <select
           value={filters.sortBy}
           onChange={(event) => onChange('sortBy', event.target.value)}
-          className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+          className="rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         >
           <option value="date-desc">Newest first</option>
           <option value="date-asc">Oldest first</option>

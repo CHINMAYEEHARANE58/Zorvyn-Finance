@@ -107,13 +107,13 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid grid-cols-1 gap-3 rounded-lg border border-white/10 bg-slate-900/60 p-4 lg:grid-cols-6"
+      className="grid grid-cols-1 gap-3 rounded-xl border border-white/10 bg-slate-900/60 p-4 lg:grid-cols-6"
     >
       <input
         type="date"
         value={formValues.date}
         onChange={(event) => handleChange('date', event.target.value)}
-        className="rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
       />
 
       <input
@@ -122,7 +122,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
         placeholder="Amount"
         value={formValues.amount}
         onChange={(event) => handleChange('amount', event.target.value)}
-        className="rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         required
       />
 
@@ -133,7 +133,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
         onChange={(event) => {
           handleChange('description', event.target.value)
         }}
-        className="rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
       />
 
       <input
@@ -145,7 +145,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
           setHasManualCategorySelection(true)
           handleChange('category', event.target.value)
         }}
-        className="rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
         required
       />
       <datalist id="category-options">
@@ -168,7 +168,7 @@ export const TransactionForm = ({ onClose, presetType = 'expense' }) => {
             return next
           })
         }}
-        className="rounded-lg border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60"
+        className="rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-gray-200 outline-none transition-all duration-200 ease-in-out focus:border-sky-400/60 focus:shadow-[0_0_0_3px_rgba(56,189,248,0.14)]"
       >
         <option value="income">Income</option>
         <option value="expense">Expense</option>

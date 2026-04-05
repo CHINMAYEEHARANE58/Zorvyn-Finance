@@ -14,6 +14,7 @@ import { PublicOnlyRoute } from './routes/PublicOnlyRoute'
 function App() {
   const { darkMode } = useFinance()
   const location = useLocation()
+  const isDashboardRoute = location.pathname.startsWith('/dashboard')
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode)
@@ -22,7 +23,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-900 dark:text-white">
-      <AppNavbar />
+      {isDashboardRoute ? null : <AppNavbar />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<LandingPage />} />

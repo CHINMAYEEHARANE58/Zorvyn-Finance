@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { formatCurrency } from '../../utils/formatters'
 import { Card } from '../ui/Card'
-import { SectionHeader } from '../ui/SectionHeader'
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const MotionPanel = motion.div
 
 const toDateKey = (value) => String(value).slice(0, 10)
 const toLocalDateKey = (date) => {
@@ -64,30 +65,28 @@ export const MiniCalendarView = ({ transactions, currency = 'USD' }) => {
 
   return (
     <Card className="p-4">
-      <SectionHeader
-        title="Mini Calendar"
-        subtitle="Click a day to view transactions"
-        actions={
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setMonthOffset((previous) => previous - 1)}
-              className="rounded-md border border-white/10 px-2 py-1 text-xs text-gray-300 transition-all duration-200 hover:bg-white/10"
-            >
-              Prev
-            </button>
-            <button
-              type="button"
-              onClick={() => setMonthOffset((previous) => previous + 1)}
-              className="rounded-md border border-white/10 px-2 py-1 text-xs text-gray-300 transition-all duration-200 hover:bg-white/10"
-            >
-              Next
-            </button>
-          </div>
-        }
-      />
-
-      <p className="mb-3 text-sm font-medium text-gray-300">{monthLabel}</p>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div>
+          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">Calendar</p>
+          <p className="mt-1 text-sm font-medium text-gray-300">{monthLabel}</p>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setMonthOffset((previous) => previous - 1)}
+            className="rounded-md border border-white/10 px-2 py-1 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:bg-white/10"
+          >
+            Prev
+          </button>
+          <button
+            type="button"
+            onClick={() => setMonthOffset((previous) => previous + 1)}
+            className="rounded-md border border-white/10 px-2 py-1 text-xs text-gray-300 transition-all duration-200 ease-in-out hover:bg-white/10"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-[11px] text-gray-500">
         {WEEK_DAYS.map((dayName) => (
@@ -104,8 +103,8 @@ export const MiniCalendarView = ({ transactions, currency = 'USD' }) => {
               onClick={() => setSelectedDateKey(cell.dateKey)}
               className={`relative rounded-md border px-1 py-2 text-xs transition-all duration-200 ${
                 selectedDateKey === cell.dateKey
-                  ? 'border-sky-400/70 bg-sky-500/15 text-sky-200'
-                  : 'border-white/10 bg-slate-900/45 text-gray-300 hover:bg-white/10'
+                  ? 'border-sky-400/60 bg-sky-500/10 text-sky-200'
+                  : 'border-transparent bg-slate-900/45 text-gray-300 hover:bg-white/8'
               }`}
             >
               {cell.day}
@@ -119,26 +118,35 @@ export const MiniCalendarView = ({ transactions, currency = 'USD' }) => {
         )}
       </div>
 
-      {selectedDateKey ? (
-        <div className="mt-4 rounded-lg border border-white/10 bg-slate-900/55 p-3">
-          <p className="text-xs uppercase tracking-[0.14em] text-gray-500">{selectedDateKey}</p>
-          {selectedDayTransactions.length ? (
-            <ul className="mt-2 space-y-2">
-              {selectedDayTransactions.slice(0, 4).map((transaction) => (
-                <li key={transaction.id} className="flex items-center justify-between gap-2 text-sm">
-                  <span className="text-gray-300">{transaction.category}</span>
-                  <span className={transaction.type === 'income' ? 'text-emerald-300' : 'text-red-300'}>
-                    {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount, currency)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-2 text-sm text-gray-400">No transactions on this day.</p>
-          )}
-        </div>
-      ) : null}
+      <AnimatePresence mode="wait">
+        {selectedDateKey ? (
+          <MotionPanel
+            key={selectedDateKey}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            className="mt-4 rounded-lg border border-white/10 bg-slate-900/55 p-3"
+          >
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500">{selectedDateKey}</p>
+            {selectedDayTransactions.length ? (
+              <ul className="mt-2 space-y-2">
+                {selectedDayTransactions.slice(0, 4).map((transaction) => (
+                  <li key={transaction.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span className="text-gray-300">{transaction.category}</span>
+                    <span className={transaction.type === 'income' ? 'text-emerald-300' : 'text-red-300'}>
+                      {transaction.type === 'income' ? '+' : '-'}
+                      {formatCurrency(transaction.amount, currency)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-gray-400">No transactions on this day.</p>
+            )}
+          </MotionPanel>
+        ) : null}
+      </AnimatePresence>
     </Card>
   )
 }

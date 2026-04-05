@@ -28,10 +28,10 @@ export const SummaryCard = ({
     Number.isFinite(amount) ? formatCurrency(animatedAmount, currency) : value
 
   return (
-    <Card className="p-4 hover:translate-y-1 hover:shadow-md">
-      <p className="text-xs font-medium uppercase tracking-[0.14em] text-gray-400">{title}</p>
+    <Card className="p-5">
+      <p className="text-xs font-medium uppercase tracking-[0.14em] text-gray-500">{title}</p>
       <div className="mt-3 flex items-end justify-between gap-3">
-        <p className={`text-2xl font-semibold tracking-tight ${valueTone[tone]}`}>{displayValue}</p>
+        <p className={`text-3xl font-semibold tracking-tight ${valueTone[tone]}`}>{displayValue}</p>
         <Badge tone={trendTone}>
           {trendIndicator} {trendText}
         </Badge>
