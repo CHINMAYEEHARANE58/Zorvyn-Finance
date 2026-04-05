@@ -2,7 +2,7 @@ import { formatCurrency } from '../../utils/formatters'
 import { Badge } from '../ui/Badge'
 
 const InsightLine = ({ text }) => (
-  <div className="rounded-lg border border-white/10 bg-slate-900/55 px-3 py-2.5 text-sm text-gray-300">
+  <div className="rounded-lg border border-white/10 bg-slate-900/55 px-3 py-2.5 text-sm text-gray-300 transition-colors duration-300 hover:text-gray-100">
     {text}
   </div>
 )
@@ -52,4 +52,3 @@ export const InsightsPanel = ({
     </div>
   )
 }
-

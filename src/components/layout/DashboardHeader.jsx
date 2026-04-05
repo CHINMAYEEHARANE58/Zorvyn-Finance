@@ -22,7 +22,14 @@ export const DashboardHeader = ({
   primaryActionLabel,
   userName,
 }) => {
-  const { role, setRole, timeRange, setTimeRange } = useFinance()
+  const {
+    role,
+    setRole,
+    timeRange,
+    setTimeRange,
+    focusMode,
+    setFocusMode,
+  } = useFinance()
 
   return (
     <header className="rounded-xl border border-white/10 bg-slate-800/55 px-5 py-5 shadow-sm transition-all duration-200 ease-in-out md:px-6">
@@ -60,6 +67,10 @@ export const DashboardHeader = ({
                 Year
               </RangeButton>
             </div>
+
+            <Button size="sm" variant="secondary" onClick={() => setFocusMode((previous) => !previous)}>
+              {focusMode ? 'Exit Focus' : 'Focus Mode'}
+            </Button>
           </div>
 
           <Button size="sm" variant="primary" onClick={onPrimaryAction}>

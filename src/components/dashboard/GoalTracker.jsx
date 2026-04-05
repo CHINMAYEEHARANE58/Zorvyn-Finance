@@ -3,7 +3,7 @@ import { convertCurrency } from '../../utils/currency'
 import { formatCurrency } from '../../utils/formatters'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
-import { SectionHeader } from '../ui/SectionHeader'
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 
 const getStorageKey = (userId) => `zorvyn.goal.${userId}`
 
@@ -25,6 +25,7 @@ export const GoalTracker = ({ userId, currentSavings, currency = 'USD' }) => {
   const [statusMessage, setStatusMessage] = useState('')
 
   const progress = goalUsd > 0 ? Math.min(100, Math.round((currentSavings / goalUsd) * 100)) : 0
+  const animatedProgress = Math.round(useAnimatedNumber(progress, 280))
 
   const saveGoal = () => {
     const parsedDisplay = Number(draftGoalDisplay)
@@ -42,10 +43,7 @@ export const GoalTracker = ({ userId, currentSavings, currency = 'USD' }) => {
 
   return (
     <Card className="p-4">
-      <SectionHeader
-        title="Goal Tracker"
-        subtitle="Set a monthly savings target"
-      />
+      <p className="text-xs uppercase tracking-[0.14em] text-gray-400">Savings Goal</p>
 
       <div className="space-y-3">
         <p className="text-sm text-gray-300">
@@ -54,10 +52,14 @@ export const GoalTracker = ({ userId, currentSavings, currency = 'USD' }) => {
 
         <div className="h-2 rounded-full bg-white/10">
           <div
-            style={{ width: `${progress}%` }}
+            style={{ width: `${animatedProgress}%` }}
             className="h-2 rounded-full bg-emerald-400 transition-all duration-300 ease-in-out"
           />
         </div>
+
+        <p className="text-sm text-gray-300">
+          You&apos;re <span className="font-semibold text-white">{animatedProgress}%</span> there.
+        </p>
 
         <div className="flex flex-wrap gap-2">
           <input

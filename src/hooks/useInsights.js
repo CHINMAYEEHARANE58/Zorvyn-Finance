@@ -8,6 +8,7 @@ import {
 
 const round = (value) => Math.round(Number(value) || 0)
 const ONE_DAY = 24 * 60 * 60 * 1000
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
 const toDate = (value) => {
   const date = new Date(value)
@@ -81,6 +82,14 @@ export const useInsights = ({ scopedTransactions, allTransactions, timeRange }) 
 
     const spendingRatio =
       summary.totalIncome > 0 ? summary.totalExpenses / summary.totalIncome : 1
+    const savingsRatio =
+      summary.totalIncome > 0 ? summary.totalBalance / summary.totalIncome : 0
+
+    const savingsScore = clamp(savingsRatio * 125, 0, 65)
+    const disciplineScore = clamp((1 - spendingRatio) * 100, 0, 35)
+    const healthScore = round(clamp(savingsScore + disciplineScore, 0, 100))
+    const healthLabel =
+      healthScore >= 75 ? 'Healthy' : healthScore >= 50 ? 'Average' : 'Risky'
 
     const spendingHealth =
       spendingRatio < 0.6
@@ -115,6 +124,23 @@ export const useInsights = ({ scopedTransactions, allTransactions, timeRange }) 
         ? round((weekExpenseDelta / Math.abs(previousWeekTotals.totalExpenses)) * 100)
         : 0
     const highestWeeklyCategory = buildCategoryBreakdown(currentWeekTransactions)[0] || null
+    const expenseTrendDirection =
+      latestMonth && previousMonth
+        ? latestMonth.expenses > previousMonth.expenses
+          ? 'up'
+          : latestMonth.expenses < previousMonth.expenses
+            ? 'down'
+            : 'flat'
+        : 'flat'
+    const incomeTrendDirection =
+      latestMonth && previousMonth
+        ? latestMonth.income > previousMonth.income
+          ? 'up'
+          : latestMonth.income < previousMonth.income
+            ? 'down'
+            : 'flat'
+        : 'flat'
+    const balanceTrendDirection = savingsTrend
 
     const conversationalInsights = [
       highestCategory
@@ -152,6 +178,16 @@ export const useInsights = ({ scopedTransactions, allTransactions, timeRange }) 
       currentWeekTotals.totalIncome > 0
         ? `You retained ${round((currentWeekTotals.totalBalance / currentWeekTotals.totalIncome) * 100)}% of this week income as savings.`
         : 'No income recorded this week.',
+    ]
+
+    const weeklySummary = [
+      `Weekly spend changed by ${weekExpenseChangePercent >= 0 ? '+' : ''}${weekExpenseChangePercent}% versus last week.`,
+      highestWeeklyCategory
+        ? `${highestWeeklyCategory.category} is driving ${highestWeeklyCategory.percent}% of current weekly expenses.`
+        : 'No clear category concentration this week.',
+      weekSavingsChangePercent >= 0
+        ? `Savings trend is up by ${Math.abs(weekSavingsChangePercent)}% this week.`
+        : `Savings trend is down by ${Math.abs(weekSavingsChangePercent)}% this week.`,
     ]
 
     const nudges = []
@@ -249,9 +285,16 @@ export const useInsights = ({ scopedTransactions, allTransactions, timeRange }) 
       savingsTrend,
       savingsImprovementPercent,
       spendingRatio,
+      savingsRatio,
       spendingHealth,
+      healthScore,
+      healthLabel,
+      expenseTrendDirection,
+      incomeTrendDirection,
+      balanceTrendDirection,
       rentToIncomeRatio,
       conversationalInsights,
+      weeklySummary,
       story: {
         headline: storyHeadline,
         highlights: storyHighlights,

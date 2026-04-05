@@ -1,7 +1,17 @@
 import { Badge } from '../ui/Badge'
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
+import { formatCurrency } from '../../utils/formatters'
 import { Card } from '../ui/Card'
 
-export const SummaryCard = ({ title, value, tone = 'neutral', trendText = '0%' }) => {
+export const SummaryCard = ({
+  title,
+  value,
+  amount,
+  currency = 'USD',
+  tone = 'neutral',
+  trendText = '0%',
+}) => {
+  const animatedAmount = useAnimatedNumber(Number.isFinite(amount) ? amount : 0, 320)
   const valueTone = {
     neutral: 'text-white',
     positive: 'text-emerald-300',
@@ -13,13 +23,18 @@ export const SummaryCard = ({ title, value, tone = 'neutral', trendText = '0%' }
     : trendText === '0%'
       ? 'neutral'
       : 'success'
+  const trendIndicator = trendText.startsWith('-') ? '↓' : trendText === '0%' ? '→' : '↑'
+  const displayValue =
+    Number.isFinite(amount) ? formatCurrency(animatedAmount, currency) : value
 
   return (
     <Card className="p-4 hover:translate-y-1 hover:shadow-md">
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-gray-400">{title}</p>
       <div className="mt-3 flex items-end justify-between gap-3">
-        <p className={`text-2xl font-semibold tracking-tight ${valueTone[tone]}`}>{value}</p>
-        <Badge tone={trendTone}>{trendText}</Badge>
+        <p className={`text-2xl font-semibold tracking-tight ${valueTone[tone]}`}>{displayValue}</p>
+        <Badge tone={trendTone}>
+          {trendIndicator} {trendText}
+        </Badge>
       </div>
     </Card>
   )
